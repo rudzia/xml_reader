@@ -32,10 +32,43 @@ namespace xml_reader
             xmlserializer = new XmlSerializer(typeof(pola_skierowania));
             isFillingFields = false;
         }
-
+        private XmlReader CreateXmlReaderWithSchemaValidation(StreamReader stream)
+        {
+            XmlReaderSettings readerSettings = new XmlReaderSettings();
+            readerSettings.ValidationType = ValidationType.Schema;
+            readerSettings.Schemas.Add(null, @"skierowanie.xsd");
+            return XmlReader.Create(stream, readerSettings);
+        }
         private void button1_Click(object sender, EventArgs e)
         {
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                StreamReader streamReader = new StreamReader(openFileDialog1.FileName);
+                XmlReader xmlReader = CreateXmlReaderWithSchemaValidation(streamReader);
 
+
+                try
+                {
+                    xmlserializer = new XmlSerializer(typeof(pola_skierowania));
+                    skierowanie = (pola_skierowania)xmlserializer.Deserialize(xmlReader);
+                    FillFormFields();
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show(
+                        "Niepoprawny format dokumentu XML",
+                        "Błąd",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                        );
+                }
+                finally
+                {
+                    streamReader.Close();
+                    xmlReader.Close();
+                }
+            }
+            /*
             xmlserializer = new XmlSerializer(typeof(pola_skierowania)); //construction of object for XML (de)serialization
             FileStream fs = new FileStream("skierowanie2.xml", FileMode.Open); //creating stream for reading from "zamowienie.xml" file
             XmlReader reader = XmlReader.Create(fs); //creating reader for reading from XML file to stream
@@ -84,6 +117,53 @@ namespace xml_reader
             };
             toolStripStatusLabel1.Text = "Status: ";
             toolStripStatusLabel2.Text = "";
+            */
+        }
+        private void FillFormFields()
+        {
+            //Passing data to GUI
+            isFillingFields = true;
+            textBox1.Text = skierowanie.nazwa_zakladu_pracy;
+            textBox2.Text = skierowanie.osoba.imie;
+            textBox3.Text = skierowanie.osoba.nazwisko;
+            textBox4.Text = skierowanie.osoba.czas_zatrudnienia;
+            textBox5.Text = skierowanie.osoba.ulica;
+            textBox6.Text = skierowanie.osoba.regon;
+            textBox7.Text = skierowanie.osoba.pesel;
+            textBox8.Text = skierowanie.osoba.stanowisko;
+            textBox9.Text = skierowanie.osoba.obecne_stanowisko;
+            textBox10.Text = skierowanie.osoba.kod_pocztowy;
+            textBox11.Text = skierowanie.dodatkowe_uwagi_A;
+            textBox12.Text = skierowanie.dodatkowe_uwagi_B;
+            textBox13.Text = skierowanie.lekarz;
+            textBox14.Text = skierowanie.zlecajacy;
+            textBox15.Text = skierowanie.osoba.miasto;
+            comboBox1.Text = skierowanie.osoba.rodzaj_badania.ToString();
+            dateTimePicker1.Value = skierowanie.data;
+
+            dataGridView1.Rows.Clear();
+            dataGridView1.Rows.Add(skierowanie.tablica_szkodliwosci.Length);
+            for (int i = 0; i < skierowanie.tablica_szkodliwosci.Length; i++)
+            {
+                dataGridView1.Rows[i].Cells[0].Value = (i + 1).ToString();
+                dataGridView1.Rows[i].Cells[1].Value = skierowanie.tablica_szkodliwosci[i].rodzaj_czynnika;
+                dataGridView1.Rows[i].Cells[2].Value = skierowanie.tablica_szkodliwosci[i].wyniki_pomiarow;
+                dataGridView1.Rows[i].Cells[3].Value = skierowanie.tablica_szkodliwosci[i].NDS_NDN;
+                dataGridView1.Rows[i].Cells[4].Value = skierowanie.tablica_szkodliwosci[i].uwagi;
+            };
+
+            dataGridView2.Rows.Clear();
+            dataGridView2.Rows.Add(skierowanie.tablica_badan.Length);
+            for (int i = 0; i < skierowanie.tablica_badan.Length; i++)
+            {
+                dataGridView2.Rows[i].Cells[0].Value = (i + 1).ToString();
+                dataGridView2.Rows[i].Cells[1].Value = skierowanie.tablica_badan[i].badanie;
+                dataGridView2.Rows[i].Cells[2].Value = skierowanie.tablica_badan[i].czestotliwosc;
+                dataGridView2.Rows[i].Cells[3].Value = skierowanie.tablica_badan[i].uwagi;
+            };
+            toolStripStatusLabel1.Text = "Status: ";
+            toolStripStatusLabel2.Text = "";
+            isFillingFields = false;
         }
         private void updateTablcaSzkodliwosci() //metoda do obslugi tabeli
         {

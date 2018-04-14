@@ -83,6 +83,8 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.dane_tab.SuspendLayout();
             this.tab_dane.SuspendLayout();
             this.tab_szkodliwe.SuspendLayout();
@@ -609,6 +611,10 @@
             this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
             this.toolStripStatusLabel2.Size = new System.Drawing.Size(0, 17);
             // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -696,6 +702,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn badanie_column;
         private System.Windows.Forms.DataGridViewTextBoxColumn czestotliwosc_column;
         private System.Windows.Forms.DataGridViewTextBoxColumn uwagi_B_column;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
     }
 }
 
