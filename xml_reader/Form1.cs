@@ -68,56 +68,6 @@ namespace xml_reader
                     xmlReader.Close();
                 }
             }
-            /*
-            xmlserializer = new XmlSerializer(typeof(pola_skierowania)); //construction of object for XML (de)serialization
-            FileStream fs = new FileStream("skierowanie2.xml", FileMode.Open); //creating stream for reading from "zamowienie.xml" file
-            XmlReader reader = XmlReader.Create(fs); //creating reader for reading from XML file to stream
-
-            skierowanie = (pola_skierowania)xmlserializer.Deserialize(reader); //deserialization of XML file
-            fs.Close(); //closing the input stream
-
-            //Passing data to GUI
-            textBox1.Text = skierowanie.nazwa_zakladu_pracy;
-            textBox2.Text = skierowanie.osoba.imie;
-            textBox3.Text = skierowanie.osoba.nazwisko;
-            textBox4.Text = skierowanie.osoba.czas_zatrudnienia;
-            textBox5.Text = skierowanie.osoba.ulica;
-            textBox6.Text = skierowanie.osoba.regon;
-            textBox7.Text = skierowanie.osoba.pesel;
-            textBox8.Text = skierowanie.osoba.stanowisko;
-            textBox9.Text = skierowanie.osoba.obecne_stanowisko;
-            textBox10.Text = skierowanie.osoba.kod_pocztowy;
-            textBox11.Text = skierowanie.dodatkowe_uwagi_A;
-            textBox12.Text = skierowanie.dodatkowe_uwagi_B;
-            textBox13.Text = skierowanie.lekarz;
-            textBox14.Text = skierowanie.zlecajacy;
-            textBox15.Text = skierowanie.osoba.miasto;
-            comboBox1.Text = skierowanie.osoba.rodzaj_badania.ToString();
-            dateTimePicker1.Value = skierowanie.data;
-
-            dataGridView1.Rows.Clear();
-            dataGridView1.Rows.Add(skierowanie.tablica_szkodliwosci.Length);
-            for (int i = 0; i < skierowanie.tablica_szkodliwosci.Length; i++)
-            {
-                dataGridView1.Rows[i].Cells[0].Value = (i + 1).ToString();
-                dataGridView1.Rows[i].Cells[1].Value = skierowanie.tablica_szkodliwosci[i].rodzaj_czynnika;
-                dataGridView1.Rows[i].Cells[2].Value = skierowanie.tablica_szkodliwosci[i].wyniki_pomiarow;
-                dataGridView1.Rows[i].Cells[3].Value = skierowanie.tablica_szkodliwosci[i].NDS_NDN;
-                dataGridView1.Rows[i].Cells[4].Value = skierowanie.tablica_szkodliwosci[i].uwagi;
-            };
-
-            dataGridView2.Rows.Clear();
-            dataGridView2.Rows.Add(skierowanie.tablica_badan.Length);
-            for (int i = 0; i < skierowanie.tablica_badan.Length; i++)
-            {
-                dataGridView2.Rows[i].Cells[0].Value = (i + 1).ToString();
-                dataGridView2.Rows[i].Cells[1].Value = skierowanie.tablica_badan[i].badanie;
-                dataGridView2.Rows[i].Cells[2].Value = skierowanie.tablica_badan[i].czestotliwosc;
-                dataGridView2.Rows[i].Cells[3].Value = skierowanie.tablica_badan[i].uwagi;
-            };
-            toolStripStatusLabel1.Text = "Status: ";
-            toolStripStatusLabel2.Text = "";
-            */
         }
         private void FillFormFields()
         {
@@ -249,8 +199,40 @@ namespace xml_reader
 
         }
 
+        private XmlDocument getValidXmlDocumentFromModel()
+        {
+            MemoryStream ms = new MemoryStream();
+            try
+            {
+                XmlSerializer xmlSerializer = new XmlSerializer(typeof(pola_skierowania));
+                XmlWriterSettings writerSettings = new XmlWriterSettings();
+                writerSettings.Indent = true;
+                writerSettings.IndentChars = ("\t");
+                ms.Position = 0;
+                XmlWriter writer = XmlWriter.Create(ms, writerSettings);
+                xmlSerializer.Serialize(writer, skierowanie);
+
+                ms.Position = 0;
+                StreamReader streamReader = new StreamReader(ms);
+                XmlReader reader = CreateXmlReaderWithSchemaValidation(streamReader);
+                XmlDocument xmlDoc = new XmlDocument();
+                xmlDoc.Load(reader);
+
+                return xmlDoc;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                ms.Close();
+            }
+        }
+
         private void button_validatesave_Click(object sender, EventArgs e)
         {
+
             MemoryStream ms = new MemoryStream(); //creating a stream for storing XML file with modified data
             XmlWriter writer = XmlWriter.Create(ms); //creating writer for writing XML file to stream
             xmlserializer.Serialize(writer, skierowanie);
@@ -270,21 +252,43 @@ namespace xml_reader
             //Writing the memory stream to a file "zamowienie_mod.xml" if the document is valid
             if (XMLValid)
             {
-                FileStream fs = new FileStream("skierowanie_gen.xml", FileMode.Create);
-                ms.Position = 0;
-                ms.CopyTo(fs);
-                fs.Close();
-                //toolStripStatusLabel2.Text = "XML valid - marshalling to \"zamowienie_mod.xml\" file";
-                toolStripStatusLabel2.Text = "Walidacja XML pomyślna - dane zapisano do pliku \"zamowienie_gen.xml\"";
+                SaveFileDialog savefile = new SaveFileDialog();
+                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    xdoc.Save(saveFileDialog1.FileName);
+                    toolStripStatusLabel2.Text = "Walidacja XML pomyślna - dane zapisano do pliku";
+                }
+
             }
             else
             {
                 //toolStripStatusLabel2.Text = "XML invalid";
+                MessageBox.Show(
+                        "Niepoprawnie wypełnione pola w dokumencie");
                 toolStripStatusLabel2.Text = "Nieprawidłowe dane dokumentu";
             }
             ms.Close();
-
-        
+                
+                /*
+            try
+            {
+                XmlDocument xmlDoc = getValidXmlDocumentFromModel();
+                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    xmlDoc.Save(saveFileDialog1.FileName);
+                    toolStripStatusLabel2.Text = "Walidacja XML pomyślna - dane zapisano do pliku";
+                }
+            }
+            catch (XmlSchemaValidationException)
+            {
+                MessageBox.Show(
+                        "Niepoprawnie wypełnione pola w dokumencie",
+                        "Błąd",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                        );
+            }
+            */
         }
         //Callback function for serving the events of incorrect validation
         static void ValidationEventCallback(object sender, ValidationEventArgs e)
@@ -394,6 +398,23 @@ namespace xml_reader
         private void textBox14_TextChanged(object sender, EventArgs e)
         {
             skierowanie.zlecajacy = textBox14.Text;
+        }
+
+        private void textBox2_Validating(object sender, CancelEventArgs e)
+        {
+            try
+            {
+                getValidXmlDocumentFromModel();
+            }
+            catch (Exception)
+            {
+                MessageBox.Show(
+                        "Pole imię ma niepoprawny format",
+                        "Walidacja",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                        );
+            }
         }
     }
 
