@@ -1,0 +1,120 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <xsd:annotation>
+    <xsd:documentation xml:lang="pl">
+       XML Schema do pliku skierowanie.
+    </xsd:documentation>
+  </xsd:annotation>
+
+  <xsd:element name="skierowanie" type="pola_skierowania"/>
+
+  <xsd:complexType name="pola_skierowania">
+    <xsd:sequence>
+      <xsd:element name="osoba" type="dane_pacjenta" minOccurs="1" maxOccurs="1"/>
+      <xsd:element name="tablica_szkodliwosci" type="Szkodliwe" minOccurs="1" maxOccurs="1"/>
+      <xsd:element name="dodatkowe_uwagi_A" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="data" type="xsd:date" minOccurs="1" maxOccurs="1"/>
+      <xsd:element name="zlecajacy" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+      <xsd:element name="tablica_badan" type="Badania" minOccurs="1" maxOccurs="1"/>
+      <xsd:element name="dodatkowe_uwagi_B" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="lekarz" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+    </xsd:sequence>
+    <xsd:attribute name="nazwa_zakladu_pracy" type="xsd:string"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="dane_pacjenta">
+    <xsd:sequence>
+      <xsd:element name="imie" type="Imie_type"  minOccurs="1" maxOccurs="1"/>
+      <xsd:element name="nazwisko" type="Nazwisko_type"  minOccurs="1" maxOccurs="1"/>
+      <xsd:element name="pesel" type="Pesel_type"  minOccurs="1" maxOccurs="1"/>
+	  <xsd:element name="ulica" type="xsd:string"  minOccurs="1" maxOccurs="1"/>
+	  <xsd:element name="kod_pocztowy" type="Kod_pocztowy_type"  minOccurs="1" maxOccurs="1"/>
+	  <xsd:element name="miasto" type="Miasto_type"  minOccurs="1" maxOccurs="1"/>
+      <xsd:element name="czas_zatrudnienia" type="xsd:string"  minOccurs="1" maxOccurs="1"/>
+      <xsd:element name="stanowisko" type="xsd:string"  minOccurs="1" maxOccurs="1"/>
+      <xsd:element name="regon" type="Regon_type"  minOccurs="1" maxOccurs="1"/>
+      <xsd:element name="obecne_stanowisko" type="xsd:string"  minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="rodzaj_badania" type="Badanie_type"  minOccurs="1" maxOccurs="1"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="Szkodliwe">
+    <xsd:sequence>
+      <xsd:element name="czynnik" minOccurs="0" maxOccurs="unbounded">
+	    <xsd:complexType>
+          <xsd:sequence>
+		    <xsd:element name="rodzaj_czynnika" type="xsd:string"/>
+            <xsd:element name="wyniki_pomiarow" type="xsd:string"  minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="NDS_NDN" type="xsd:string"  minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="uwagi" type="xsd:string"  minOccurs="0" maxOccurs="1"/>
+          </xsd:sequence>
+		</xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="Badania">
+    <xsd:sequence>
+      <xsd:element name="badanie_konsultacja" minOccurs="1" maxOccurs="unbounded">
+        <xsd:complexType>
+          <xsd:sequence>
+		    <xsd:element name="badanie" type="xsd:string"/>
+            <xsd:element name="czestotliwosc" type="xsd:string"  minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="uwagi" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:simpleType name="Badanie_type">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="wstepne"/>
+      <xsd:enumeration value="okresowe"/>
+      <xsd:enumeration value="kontrolne"/>
+      <xsd:enumeration value="koncowe"/>
+      <xsd:enumeration value="zmiana stanowiska pracy"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="Pesel_type">
+    <xsd:restriction base="xsd:integer">
+      <xsd:pattern value="[0-9]{11}"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="Regon_type">
+    <xsd:restriction base="xsd:integer">
+      <xsd:pattern value="[0-9]{9}|[0-9]{14}"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+
+  <xsd:simpleType name="Imie_type">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="([a-zA-Z])*"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  
+    <xsd:simpleType name="Nazwisko_type">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="([a-zA-Z])*"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  
+     <xsd:simpleType name="Kod_pocztowy_type">
+      <xsd:restriction base="xsd:string">
+         <xsd:pattern value="\d{2}-\d{3}"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   
+      <xsd:simpleType name="Miasto_type">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="([a-zA-Z])*"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  
+
+  
+
+  </xsd:schema>

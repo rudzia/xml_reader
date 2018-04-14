@@ -1,0 +1,9 @@
+c:\users\alicja\documents\visual studio 2015\Projects\xml_reader\xml_reader\bin\Debug\xml_reader.exe.config
+C:\Users\Alicja\documents\visual studio 2015\Projects\xml_reader\xml_reader\bin\Debug\xml_reader.exe
+C:\Users\Alicja\documents\visual studio 2015\Projects\xml_reader\xml_reader\bin\Debug\xml_reader.pdb
+C:\Users\Alicja\documents\visual studio 2015\Projects\xml_reader\xml_reader\obj\Debug\xml_reader.Form1.resources
+C:\Users\Alicja\documents\visual studio 2015\Projects\xml_reader\xml_reader\obj\Debug\xml_reader.Properties.Resources.resources
+C:\Users\Alicja\documents\visual studio 2015\Projects\xml_reader\xml_reader\obj\Debug\xml_reader.csproj.GenerateResource.Cache
+C:\Users\Alicja\documents\visual studio 2015\Projects\xml_reader\xml_reader\obj\Debug\xml_reader.exe
+C:\Users\Alicja\documents\visual studio 2015\Projects\xml_reader\xml_reader\obj\Debug\xml_reader.pdb
+C:\Users\Alicja\Documents\Visual Studio 2015\Projects\xml_reader\xml_reader\obj\Debug\xml_reader.csprojResolveAssemblyReference.cache
