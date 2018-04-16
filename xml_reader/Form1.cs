@@ -11,6 +11,7 @@ using System.Xml.Serialization;
 using System.Xml;
 using System.Xml.Schema;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace xml_reader
 {
@@ -20,7 +21,7 @@ namespace xml_reader
             XmlSerializer xmlserializer; //Object used for serialization and deserialization
             pola_skierowania skierowanie;//Object containing data from XML "skierowanie.xml"
             static bool XMLValid; //XML validity flag
-            private bool isFillingFields; // czyto nie jest to samo co powyzej?
+            private bool isAllFill; // czyto nie jest to samo co powyzej?
 
         public Form1()
         {
@@ -30,7 +31,7 @@ namespace xml_reader
             skierowanie.tablica_badan = new BadaniaBadanie_konsultacja[20];
             skierowanie.tablica_szkodliwosci = new SzkodliweCzynnik[20];
             xmlserializer = new XmlSerializer(typeof(pola_skierowania));
-            isFillingFields = false;
+            isAllFill= false;
         }
         private XmlReader CreateXmlReaderWithSchemaValidation(StreamReader stream)
         {
@@ -72,7 +73,7 @@ namespace xml_reader
         private void FillFormFields()
         {
             //Passing data to GUI
-            isFillingFields = true;
+            isAllFill = true;
             textBox1.Text = skierowanie.nazwa_zakladu_pracy;
             textBox2.Text = skierowanie.osoba.imie;
             textBox3.Text = skierowanie.osoba.nazwisko;
@@ -82,7 +83,6 @@ namespace xml_reader
             textBox7.Text = skierowanie.osoba.pesel;
             textBox8.Text = skierowanie.osoba.stanowisko;
             textBox9.Text = skierowanie.osoba.obecne_stanowisko;
-            textBox10.Text = skierowanie.osoba.kod_pocztowy;
             textBox11.Text = skierowanie.dodatkowe_uwagi_A;
             textBox12.Text = skierowanie.dodatkowe_uwagi_B;
             textBox13.Text = skierowanie.lekarz;
@@ -90,6 +90,7 @@ namespace xml_reader
             textBox15.Text = skierowanie.osoba.miasto;
             comboBox1.Text = skierowanie.osoba.rodzaj_badania.ToString();
             dateTimePicker1.Value = skierowanie.data;
+            maskedTextBox1.Text = skierowanie.osoba.kod_pocztowy;
 
             dataGridView1.Rows.Clear();
             dataGridView1.Rows.Add(skierowanie.tablica_szkodliwosci.Length);
@@ -113,7 +114,58 @@ namespace xml_reader
             };
             toolStripStatusLabel1.Text = "Status: ";
             toolStripStatusLabel2.Text = "";
-            isFillingFields = false;
+            isAllFill = false;
+        }
+        private void checkAllFields()
+        {
+            string message = "Niewypełnione pola:\n";
+            if (textBox1.Text == "")
+                message += "* Nazwa zakładu pracy\n";
+            if (textBox2.Text == "")
+                message += "* Imię\n";
+            if (textBox3.Text == "")
+                message += "* Nazwisko\n";
+            if (textBox7.Text == "")
+                message += "* PESEL\n";
+            if (textBox4.Text == "")
+                message += "* Czas zatrudnienia\n";
+            if (textBox5.Text == "")
+                message += "* Ulica\n";
+            if (maskedTextBox1.Text == "")
+                message += "* Kod pocztowy\n";
+            if (textBox15.Text == "")
+                message += "* Miasto\n";
+            if (comboBox1.Text == "")
+                message += "* Rodzaj badania\n";
+            if (textBox6.Text == "")
+                message += "* REGON\n";
+            if (textBox8.Text == "")
+                message += "* Zatrudniony na stanowisko \n";
+            if (textBox14.Text == "")
+                message += "* Osoba zlecająca\n";
+            if (dataGridView1.Rows[0].Cells[0].Value == null)
+                message += "* Tablica szkodliwości\n";
+            if (dataGridView2.Rows[0].Cells[0].Value == null)
+                message += "* Tablica badań\n";
+            if (textBox13.Text == "")
+                message += "* Imię i nazwisko Lekarza\n";
+
+            if (message != "Niewypełnione pola:\n")
+            {
+                toolStripStatusLabel1.Text = "Status: ";
+                toolStripStatusLabel2.Text = "Wykryto puste pola!";
+                MessageBox.Show(
+                       message + "Plik xml zostanie zapisany z pustymi polami!",
+                       "Błąd",
+                       MessageBoxButtons.OK,
+                       MessageBoxIcon.Warning
+                       );
+            }
+            else {
+                toolStripStatusLabel1.Text = "Status: ";
+                toolStripStatusLabel2.Text = "Wszystkie wymagane pola są uzupełnione.";
+            }
+            
         }
         private void updateTablcaSzkodliwosci() //metoda do obslugi tabeli
         {
@@ -162,12 +214,12 @@ namespace xml_reader
 
         private void textBox3_TextChanged(object sender, EventArgs e)
         {
-            skierowanie.osoba.nazwisko = textBox2.Text;
+            skierowanie.osoba.nazwisko = textBox3.Text;
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            skierowanie.nazwa_zakladu_pracy = textBox2.Text;
+            skierowanie.nazwa_zakladu_pracy = textBox1.Text;
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -201,6 +253,7 @@ namespace xml_reader
 
         private XmlDocument getValidXmlDocumentFromModel()
         {
+
             MemoryStream ms = new MemoryStream();
             try
             {
@@ -232,7 +285,27 @@ namespace xml_reader
 
         private void button_validatesave_Click(object sender, EventArgs e)
         {
-
+            checkAllFields();
+            isValid(sender, e);
+            
+            try
+            {
+                XmlDocument xmlDoc = getValidXmlDocumentFromModel();
+                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    xmlDoc.Save(saveFileDialog1.FileName);
+                }
+            }
+            catch (XmlSchemaValidationException)
+            {
+                MessageBox.Show(
+                        "Niepoprawnie wypełnione pola w dokumencie. Proszę o korektę.",
+                        "Błąd",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                        );
+            }
+            /*
             MemoryStream ms = new MemoryStream(); //creating a stream for storing XML file with modified data
             XmlWriter writer = XmlWriter.Create(ms); //creating writer for writing XML file to stream
             xmlserializer.Serialize(writer, skierowanie);
@@ -255,7 +328,11 @@ namespace xml_reader
                 SaveFileDialog savefile = new SaveFileDialog();
                 if (saveFileDialog1.ShowDialog() == DialogResult.OK)
                 {
-                    xdoc.Save(saveFileDialog1.FileName);
+                    //xdoc.Save(saveFileDialog1.FileName);
+                    FileStream fs = new FileStream(saveFileDialog1.FileName, FileMode.Create);
+                    ms.Position = 0;
+                    ms.CopyTo(fs);
+                    fs.Close();
                     toolStripStatusLabel2.Text = "Walidacja XML pomyślna - dane zapisano do pliku";
                 }
 
@@ -268,31 +345,113 @@ namespace xml_reader
                 toolStripStatusLabel2.Text = "Nieprawidłowe dane dokumentu";
             }
             ms.Close();
-                
-                /*
-            try
+            */
+        }
+
+        private void isValid(object sender, EventArgs e)
+        {
+
+                MemoryStream ms = new MemoryStream(); //creating a stream for storing XML file with modified data
+                XmlWriter writer = XmlWriter.Create(ms); //creating writer for writing XML file to stream
+                xmlserializer.Serialize(writer, skierowanie);
+
+                XmlReaderSettings xrset = new XmlReaderSettings(); //definition of XML reader settings
+                xrset.ValidationType = ValidationType.Schema; //validation based on XML Schema
+                ms.Position = 0; //setting the pointer on beginning of memory stream
+                XmlReader reader = XmlReader.Create(ms, xrset); //creating a reader for reading XML from memory stream
+
+                XmlDocument xdoc = new XmlDocument(); //creating an XML document
+                xdoc.Load(reader); //loading document from memory stream
+                xdoc.Schemas.Add(null, @"skierowanie.xsd"); //connecting the XML document with schema from "zamowienie.xsd"
+                //ValidationEventHandler eventHandler = new ValidationEventHandler(ValidationEventCallback); //setting the event handler for handling incorrect validation events
+                XMLValid = true; //setting the default value of XML validity flag for true
+                xdoc.Validate(ValidationEventHandler); //performing validation
+
+        }
+        static void ValidationEventHandler(object sender, ValidationEventArgs e)
+        {
+            XmlSeverityType type = XmlSeverityType.Warning;
+            if (Enum.TryParse<XmlSeverityType>("Error", out type))
             {
-                XmlDocument xmlDoc = getValidXmlDocumentFromModel();
-                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                if (type == XmlSeverityType.Error)
                 {
-                    xmlDoc.Save(saveFileDialog1.FileName);
-                    toolStripStatusLabel2.Text = "Walidacja XML pomyślna - dane zapisano do pliku";
-                }
-            }
-            catch (XmlSchemaValidationException)
-            {
-                MessageBox.Show(
-                        "Niepoprawnie wypełnione pola w dokumencie",
-                        "Błąd",
+                    XMLValid = false;
+                    string a = e.Message.Split('.')[0];
+                    string[] b = a.Split(' ');
+
+                    if (b.Contains("'imie'") && b.Contains("Pattern"))
+                    {
+                        MessageBox.Show(
+                        "Pole imie jest niepoprawne.\n Proszę poprawnie uzupełnić.",
+                        "Walidacja",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error
                         );
+                    }
+                    else if (b.Contains("'nazwisko'") && b.Contains("Pattern")) { 
+                        MessageBox.Show(
+                        "Pole nazwisko jest niepoprawne. \n Proszę poprawnie uzupełnić.",
+                        "Walidacja",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                        );
+                    }
+                    else if (b.Contains("'pesel'") && b.Contains("Pattern"))
+                    {
+                        MessageBox.Show(
+                        "Pole pesel jest niepoprawne. Wymagane 11 cyfr.",
+                        "Walidacja",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                        );
+                    }
+                    else if (b.Contains("'kod_pocztowy'") && b.Contains("Pattern"))
+                    {
+                        MessageBox.Show(
+                        "Pole kod pocztowy jest niepoprawne. Struktura XX-XXX",
+                        "Walidacja",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                        );
+                    }
+                    else if (b.Contains("'regon'") && b.Contains("Pattern"))
+                    {
+                        MessageBox.Show(
+                        "Pole regon jest niepoprawne. Wymagane 9 lub 14 cyfr",
+                        "Walidacja",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                        );
+                    }
+                    else if (b.Contains("'miasto'") && b.Contains("Pattern"))
+                    {
+                        //MIASTA NIE DA SIE  ZWALIDOWAC
+                        MessageBox.Show(
+                        "Pole miasto jest niepoprawne. \n Proszę poprawnie uzupełnić.",
+                        "Walidacja",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                        );
+                    }
+                    else if (b.Contains("'rodzaj_badania'") && b.Contains("Pattern"))
+                    {
+                        //MIASTA NIE DA SIE  ZWALIDOWAC
+                        MessageBox.Show(
+                        "Pole 'typ badania' jest niepoprawne. \n Proszę poprawnie uzupełnić.",
+                        "Walidacja",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                        );
+                    }
+
+                }
             }
-            */
         }
+        
         //Callback function for serving the events of incorrect validation
         static void ValidationEventCallback(object sender, ValidationEventArgs e)
         {
+
             string msg;
             switch (e.Severity)
             {
@@ -311,7 +470,7 @@ namespace xml_reader
             }
 
         }
-
+        
         private void statusStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
 
@@ -330,13 +489,26 @@ namespace xml_reader
         private void updateTablicaBadan() //metoda do obslugi tabeli
         {
             skierowanie.tablica_badan = new BadaniaBadanie_konsultacja[dataGridView2.RowCount - 1];
-            for (int i = 0; i < dataGridView2.RowCount - 1; i++)
+
+            try
             {
-                dataGridView2.Rows[i].Cells[0].Value = i + 1;
-                skierowanie.tablica_badan[i] = new BadaniaBadanie_konsultacja();
-                skierowanie.tablica_badan[i].badanie = dataGridView2.Rows[i].Cells[1].Value.ToString();
-                skierowanie.tablica_badan[i].czestotliwosc = dataGridView2.Rows[i].Cells[2].Value.ToString();
-                skierowanie.tablica_badan[i].uwagi = dataGridView2.Rows[i].Cells[3].Value.ToString();
+                for (int i = 0; i < dataGridView2.RowCount - 1; i++)
+                {
+                    dataGridView2.Rows[i].Cells[0].Value = i + 1;
+                    skierowanie.tablica_badan[i] = new BadaniaBadanie_konsultacja();
+                    skierowanie.tablica_badan[i].badanie = dataGridView2.Rows[i].Cells[1].Value.ToString();
+                    skierowanie.tablica_badan[i].czestotliwosc = dataGridView2.Rows[i].Cells[2].Value.ToString();
+                    skierowanie.tablica_badan[i].uwagi = dataGridView2.Rows[i].Cells[3].Value.ToString();
+                }
+            }
+            catch (Exception)
+            {
+                MessageBox.Show(
+                            "Wszystkie pola w tabeli muszą zostać uzupełnione.\n",
+                            "Błąd",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error
+                            );
             }
         }
 
@@ -363,11 +535,6 @@ namespace xml_reader
         private void textBox5_TextChanged(object sender, EventArgs e)
         {
             skierowanie.osoba.ulica = textBox5.Text;
-        }
-
-        private void textBox10_TextChanged(object sender, EventArgs e)
-        {
-            skierowanie.osoba.kod_pocztowy = textBox10.Text;
         }
 
         private void textBox15_TextChanged(object sender, EventArgs e)
@@ -402,19 +569,127 @@ namespace xml_reader
 
         private void textBox2_Validating(object sender, CancelEventArgs e)
         {
-            try
+            isValid(sender, e);
+            //imie
+            /*try
             {
                 getValidXmlDocumentFromModel();
             }
             catch (Exception)
             {
                 MessageBox.Show(
-                        "Pole imię ma niepoprawny format",
+                        "Pole imię jest niepoprawne.",
                         "Walidacja",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error
                         );
             }
+            */
+        }
+
+        private void textBox3_Validating(object sender, CancelEventArgs e)
+        {
+            //nazwisko
+            isValid(sender, e);
+        }
+
+        private void textBox7_Validating(object sender, CancelEventArgs e)
+        {
+            //pesel
+            isValid(sender, e);
+        }
+
+        private void textBox5_Validating(object sender, CancelEventArgs e)
+        {
+            //ulica
+            //isValid(sender, e);
+            
+        }
+
+        private void textBox1_Validating(object sender, CancelEventArgs e)
+        {
+            //nazwa zakladu rpracy
+            isValid(sender, e);
+        }
+
+        private void textBox6_Validating(object sender, CancelEventArgs e)
+        {
+            //regon
+            isValid(sender, e);
+        }
+
+        private void textBox9_Validating(object sender, CancelEventArgs e)
+        {
+            
+        }
+
+        private void textBox8_Validating(object sender, CancelEventArgs e)
+        {
+            //stanowisko
+            isValid(sender, e);
+        }
+
+        private void textBox4_Validating(object sender, CancelEventArgs e)
+        {
+            
+        }
+
+        private void textBox14_Validating(object sender, CancelEventArgs e)
+        {
+            isValid(sender, e);
+        }
+
+        private void textBox13_TextChanged(object sender, EventArgs e)
+        {
+            
+            skierowanie.lekarz = textBox13.Text;
+        }
+
+        private void textBox13_Validating(object sender, CancelEventArgs e)
+        {
+            
+        }
+
+        private void textBox7_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            
+        }
+
+        private void textBox6_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            
+        }
+
+        private void textBox15_Validating(object sender, CancelEventArgs e)
+        {
+            //miasto
+            isValid(sender, e);
+        }
+
+        private void comboBox1_Validating(object sender, CancelEventArgs e)
+        {
+            //nie waliduje sie
+            isValid(sender, e);
+        }
+
+        private void maskedTextBox1_MaskInputRejected(object sender, MaskInputRejectedEventArgs e)
+        {
+            skierowanie.osoba.kod_pocztowy= maskedTextBox1.Text;
+        }
+
+        private void maskedTextBox1_Validating(object sender, CancelEventArgs e)
+        {
+            isValid(sender, e);
+        }
+
+        private void textBox2_KeyPress(object sender, KeyPressEventArgs e)
+        {
+
+        }
+
+        private void textBox3_KeyPress(object sender, KeyPressEventArgs e)
+        {
+
         }
     }
 
