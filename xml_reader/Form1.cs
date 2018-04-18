@@ -21,17 +21,17 @@ namespace xml_reader
             XmlSerializer xmlserializer; //Object used for serialization and deserialization
             pola_skierowania skierowanie;//Object containing data from XML "skierowanie.xml"
             static bool XMLValid; //XML validity flag
-            private bool isAllFill; // czyto nie jest to samo co powyzej?
 
         public Form1()
         {
-            InitializeComponent();
+            
             skierowanie = new pola_skierowania();
             skierowanie.osoba = new dane_pacjenta();
             skierowanie.tablica_badan = new BadaniaBadanie_konsultacja[20];
             skierowanie.tablica_szkodliwosci = new SzkodliweCzynnik[20];
+            skierowanie.data = new DateTime();
             xmlserializer = new XmlSerializer(typeof(pola_skierowania));
-            isAllFill= false;
+            InitializeComponent();
         }
         private XmlReader CreateXmlReaderWithSchemaValidation(StreamReader stream)
         {
@@ -73,7 +73,6 @@ namespace xml_reader
         private void FillFormFields()
         {
             //Passing data to GUI
-            isAllFill = true;
             textBox1.Text = skierowanie.nazwa_zakladu_pracy;
             textBox2.Text = skierowanie.osoba.imie;
             textBox3.Text = skierowanie.osoba.nazwisko;
@@ -88,7 +87,11 @@ namespace xml_reader
             textBox13.Text = skierowanie.lekarz;
             textBox14.Text = skierowanie.zlecajacy;
             textBox15.Text = skierowanie.osoba.miasto;
-            comboBox1.Text = skierowanie.osoba.rodzaj_badania.ToString();
+            string rodz_badania = skierowanie.osoba.rodzaj_badania.ToString();
+            if (rodz_badania == "zmianastanowiskapracy")
+                comboBox1.Text = "zmiana stanowiska pracy";
+            else
+                comboBox1.Text = skierowanie.osoba.rodzaj_badania.ToString();
             dateTimePicker1.Value = skierowanie.data;
             maskedTextBox1.Text = skierowanie.osoba.kod_pocztowy;
 
@@ -113,8 +116,8 @@ namespace xml_reader
                 dataGridView2.Rows[i].Cells[3].Value = skierowanie.tablica_badan[i].uwagi;
             };
             toolStripStatusLabel1.Text = "Status: ";
-            toolStripStatusLabel2.Text = "";
-            isAllFill = false;
+            toolStripStatusLabel2.Text = "Wypełniono formularz danymi z pliku .xml";
+
         }
         private void checkAllFields()
         {
@@ -155,7 +158,7 @@ namespace xml_reader
                 toolStripStatusLabel1.Text = "Status: ";
                 toolStripStatusLabel2.Text = "Wykryto puste pola!";
                 MessageBox.Show(
-                       message + "Plik xml zostanie zapisany z pustymi polami!",
+                       message + "\nPlik xml zostanie zapisany z pustymi polami!",
                        "Błąd",
                        MessageBoxButtons.OK,
                        MessageBoxIcon.Warning
@@ -194,6 +197,8 @@ namespace xml_reader
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             string selected = comboBox1.GetItemText(comboBox1.SelectedItem);
+            if (selected == "zmiana stanowiska pracy")
+                selected = "zmianastanowiskapracy";
             skierowanie.osoba.rodzaj_badania = (Badanie_type)Enum.Parse(typeof(Badanie_type), selected);
         }
 
@@ -228,12 +233,12 @@ namespace xml_reader
         }
         private void dataGridView1_RowValidated(object sender, DataGridViewCellEventArgs e)
         {
-            updateTablcaSzkodliwosci();
+           // updateTablcaSzkodliwosci();
         }
 
         private void dataGridView1_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
         {
-            updateTablcaSzkodliwosci();
+           // updateTablcaSzkodliwosci();
         }
 
         private void label16_Click(object sender, EventArgs e)
@@ -271,6 +276,7 @@ namespace xml_reader
                 XmlDocument xmlDoc = new XmlDocument();
                 xmlDoc.Load(reader);
 
+
                 return xmlDoc;
             }
             catch (Exception)
@@ -299,53 +305,13 @@ namespace xml_reader
             catch (XmlSchemaValidationException)
             {
                 MessageBox.Show(
-                        "Niepoprawnie wypełnione pola w dokumencie. Proszę o korektę.",
+                        "Niepoprawnie wypełnione pola w dokumencie."+ 
+                        "\nPlik nie zostanie zapisany. Proszę o korektę.",
                         "Błąd",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error
                         );
             }
-            /*
-            MemoryStream ms = new MemoryStream(); //creating a stream for storing XML file with modified data
-            XmlWriter writer = XmlWriter.Create(ms); //creating writer for writing XML file to stream
-            xmlserializer.Serialize(writer, skierowanie);
-
-            XmlReaderSettings xrset = new XmlReaderSettings(); //definition of XML reader settings
-            xrset.ValidationType = ValidationType.Schema; //validation based on XML Schema
-            ms.Position = 0; //setting the pointer on beginning of memory stream
-            XmlReader reader = XmlReader.Create(ms, xrset); //creating a reader for reading XML from memory stream
-
-            XmlDocument xdoc = new XmlDocument(); //creating an XML document
-            xdoc.Load(reader); //loading document from memory stream
-            xdoc.Schemas.Add(null, @"skierowanie.xsd"); //connecting the XML document with schema from "zamowienie.xsd"
-            ValidationEventHandler eventHandler = new ValidationEventHandler(ValidationEventCallback); //setting the event handler for handling incorrect validation events
-            XMLValid = true; //setting the default value of XML validity flag for true
-            xdoc.Validate(eventHandler); //performing validation
-
-            //Writing the memory stream to a file "zamowienie_mod.xml" if the document is valid
-            if (XMLValid)
-            {
-                SaveFileDialog savefile = new SaveFileDialog();
-                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-                {
-                    //xdoc.Save(saveFileDialog1.FileName);
-                    FileStream fs = new FileStream(saveFileDialog1.FileName, FileMode.Create);
-                    ms.Position = 0;
-                    ms.CopyTo(fs);
-                    fs.Close();
-                    toolStripStatusLabel2.Text = "Walidacja XML pomyślna - dane zapisano do pliku";
-                }
-
-            }
-            else
-            {
-                //toolStripStatusLabel2.Text = "XML invalid";
-                MessageBox.Show(
-                        "Niepoprawnie wypełnione pola w dokumencie");
-                toolStripStatusLabel2.Text = "Nieprawidłowe dane dokumentu";
-            }
-            ms.Close();
-            */
         }
 
         private void isValid(object sender, EventArgs e)
@@ -382,7 +348,7 @@ namespace xml_reader
                     if (b.Contains("'imie'") && b.Contains("Pattern"))
                     {
                         MessageBox.Show(
-                        "Pole imie jest niepoprawne.\n Proszę poprawnie uzupełnić.",
+                        "Pole 'Imię' jest niepoprawne.\nProszę poprawnie uzupełnić pole.",
                         "Walidacja",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error
@@ -390,7 +356,7 @@ namespace xml_reader
                     }
                     else if (b.Contains("'nazwisko'") && b.Contains("Pattern")) { 
                         MessageBox.Show(
-                        "Pole nazwisko jest niepoprawne. \n Proszę poprawnie uzupełnić.",
+                        "Pole 'Nazwisko' jest niepoprawne. \nProszę poprawnie uzupełnić pole.",
                         "Walidacja",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error
@@ -399,7 +365,7 @@ namespace xml_reader
                     else if (b.Contains("'pesel'") && b.Contains("Pattern"))
                     {
                         MessageBox.Show(
-                        "Pole pesel jest niepoprawne. Wymagane 11 cyfr.",
+                        "Pole 'PESEL' jest niepoprawne. Wymagane 11 cyfr.",
                         "Walidacja",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error
@@ -408,7 +374,7 @@ namespace xml_reader
                     else if (b.Contains("'kod_pocztowy'") && b.Contains("Pattern"))
                     {
                         MessageBox.Show(
-                        "Pole kod pocztowy jest niepoprawne. Struktura XX-XXX",
+                        "Pole 'Kod_pocztowy' jest niepoprawne. Struktura XX-XXX.",
                         "Walidacja",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error
@@ -417,7 +383,7 @@ namespace xml_reader
                     else if (b.Contains("'regon'") && b.Contains("Pattern"))
                     {
                         MessageBox.Show(
-                        "Pole regon jest niepoprawne. Wymagane 9 lub 14 cyfr",
+                        "Pole 'REGON' jest niepoprawne. Wymagane 9 lub 14 cyfr.",
                         "Walidacja",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error
@@ -427,7 +393,7 @@ namespace xml_reader
                     {
                         //MIASTA NIE DA SIE  ZWALIDOWAC
                         MessageBox.Show(
-                        "Pole miasto jest niepoprawne. \n Proszę poprawnie uzupełnić.",
+                        "Pole 'Miasto' jest niepoprawne. \nProszę poprawnie uzupełnić pole.",
                         "Walidacja",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error
@@ -435,9 +401,9 @@ namespace xml_reader
                     }
                     else if (b.Contains("'rodzaj_badania'") && b.Contains("Pattern"))
                     {
-                        //MIASTA NIE DA SIE  ZWALIDOWAC
+                        
                         MessageBox.Show(
-                        "Pole 'typ badania' jest niepoprawne. \n Proszę poprawnie uzupełnić.",
+                        "Pole 'Typ_badania' jest niepoprawne. \nProszę poprawnie uzupełnić pole.",
                         "Walidacja",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error
@@ -514,12 +480,13 @@ namespace xml_reader
 
         private void dataGridView2_RowValidated(object sender, DataGridViewCellEventArgs e)
         {
-            updateTablicaBadan();
+            //updateTablicaBadan();
+            isValid(sender, e);
         }
 
         private void dataGridView2_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
         {
-            updateTablicaBadan();
+            //updateTablicaBadan();
         }
 
         private void dataGridView2_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -570,21 +537,7 @@ namespace xml_reader
         private void textBox2_Validating(object sender, CancelEventArgs e)
         {
             isValid(sender, e);
-            //imie
-            /*try
-            {
-                getValidXmlDocumentFromModel();
-            }
-            catch (Exception)
-            {
-                MessageBox.Show(
-                        "Pole imię jest niepoprawne.",
-                        "Walidacja",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error
-                        );
-            }
-            */
+
         }
 
         private void textBox3_Validating(object sender, CancelEventArgs e)
@@ -620,7 +573,7 @@ namespace xml_reader
 
         private void textBox9_Validating(object sender, CancelEventArgs e)
         {
-            
+            isValid(sender, e);
         }
 
         private void textBox8_Validating(object sender, CancelEventArgs e)
@@ -631,7 +584,7 @@ namespace xml_reader
 
         private void textBox4_Validating(object sender, CancelEventArgs e)
         {
-            
+            isValid(sender, e);
         }
 
         private void textBox14_Validating(object sender, CancelEventArgs e)
@@ -647,7 +600,7 @@ namespace xml_reader
 
         private void textBox13_Validating(object sender, CancelEventArgs e)
         {
-            
+            isValid(sender, e);
         }
 
         private void textBox7_KeyPress(object sender, KeyPressEventArgs e)
@@ -1042,7 +995,7 @@ namespace xml_reader
     {
 
         /// <remarks/>
-        wstepne,
+        wstępne,
 
         /// <remarks/>
         okresowe,
@@ -1051,7 +1004,7 @@ namespace xml_reader
         kontrolne,
 
         /// <remarks/>
-        koncowe,
+        końcowe,
 
         /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("zmiana stanowiska pracy")]

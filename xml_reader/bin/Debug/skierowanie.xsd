@@ -69,10 +69,10 @@
 
   <xsd:simpleType name="Badanie_type">
     <xsd:restriction base="xsd:string">
-      <xsd:enumeration value="wstepne"/>
+      <xsd:enumeration value="wstępne"/>
       <xsd:enumeration value="okresowe"/>
       <xsd:enumeration value="kontrolne"/>
-      <xsd:enumeration value="koncowe"/>
+      <xsd:enumeration value="końcowe"/>
       <xsd:enumeration value="zmiana stanowiska pracy"/>
     </xsd:restriction>
   </xsd:simpleType>
@@ -92,13 +92,13 @@
 
   <xsd:simpleType name="Imie_type">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="([a-zA-Z])*"/>
+      <xsd:pattern value="[A-ZĄĆĘÓŃŚŁŻŹ]([a-ząćęóńśłżź])*"/>
     </xsd:restriction>
   </xsd:simpleType>
   
     <xsd:simpleType name="Nazwisko_type">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="([a-zA-Z])*"/>
+      <xsd:pattern value="[A-ZĄĆĘÓŃŚŁŻŹ]([a-ząćęóńśłżź])*"/>
     </xsd:restriction>
   </xsd:simpleType>
   
@@ -110,7 +110,7 @@
    
       <xsd:simpleType name="Miasto_type">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="([a-zA-Z])*"/>
+      <xsd:pattern value="[A-ZĄĆĘÓŃŚŁŻŹ]([a-ząćęóńśłżź])*"/>
     </xsd:restriction>
   </xsd:simpleType>
   

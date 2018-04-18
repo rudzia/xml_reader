@@ -16,24 +16,24 @@
   <tablica_szkodliwosci>
     <czynnik>
       <rodzaj_czynnika>halas</rodzaj_czynnika>
-      <wyniki_pomiarow>"82 dB"</wyniki_pomiarow>
-      <NDS_NDN>"0,5 NDN"</NDS_NDN>
+      <wyniki_pomiarow>82 dB</wyniki_pomiarow>
+      <NDS_NDN>0,5 NDN</NDS_NDN>
       <uwagi>narzedzia spalinowe</uwagi>
     </czynnik>
     <czynnik>
       <rodzaj_czynnika>Czynnik chemiczny: Terpentyna</rodzaj_czynnika>
-      <wyniki_pomiarow>"14,5 mg/m3"</wyniki_pomiarow>
-      <NDS_NDN>0.13 NDS</NDS_NDN>
+      <wyniki_pomiarow>14,5 mg/m3</wyniki_pomiarow>
+      <NDS_NDN>0,13 NDS</NDS_NDN>
       <uwagi>brak</uwagi>
     </czynnik>
   </tablica_szkodliwosci>
   <data>2018-03-12</data>
-  <zlecajacy>"Jan Nowak"</zlecajacy>
+  <zlecajacy>Jan Nowak</zlecajacy>
   <tablica_badan>
     <badanie_konsultacja>
       <badanie>Okulista</badanie>
       <czestotliwosc>Raz na 5 lat</czestotliwosc>
-      <uwagi>"Podczas pracy konieczne noszenie okularow"</uwagi>
+      <uwagi>Podczas pracy konieczne noszenie okularow</uwagi>
     </badanie_konsultacja>
     <badanie_konsultacja>
       <badanie>Lekarz medycyny pracy</badanie>
@@ -41,5 +41,5 @@
       <uwagi>Pracownik zdolny do pracy</uwagi>
     </badanie_konsultacja>
   </tablica_badan>
-  <lekarz>"dr. M. Malinowski"</lekarz>
+  <lekarz>dr. M. Malinowski</lekarz>
 </skierowanie>

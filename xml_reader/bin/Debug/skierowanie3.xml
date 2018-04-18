@@ -1,35 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <skierowanie nazwa_zakladu_pracy="Laboratorium ANCHEM">
   <osoba>
-    <imie>Michal</imie>
+    <imie>Michał</imie>
     <nazwisko>Kowalski</nazwisko>
     <pesel>94150213561</pesel>
-    <ulica>"ul. Poznanska 17/2</ulica>
+    <ulica>ul. Poznańska 17/2</ulica>
     <kod_pocztowy>88-175</kod_pocztowy>
     <miasto>Wroclaw</miasto>
-    <czas_zatrudnienia>"1 rok"</czas_zatrudnienia>
-    <stanowisko>"Technolog"</stanowisko>
+    <czas_zatrudnienia>1 rok</czas_zatrudnienia>
+    <stanowisko>Technolog</stanowisko>
     <regon>125486974</regon>
-    <rodzaj_badania>koncowe</rodzaj_badania>
+    <rodzaj_badania>końcowe</rodzaj_badania>
   </osoba>
   <tablica_szkodliwosci>
   <czynnik>
-      <rodzaj_czynnika>"halas"</rodzaj_czynnika>
-      <wyniki_pomiarow>"82 dB"</wyniki_pomiarow>
-      <NDS_NDN>"0,5 NDN"</NDS_NDN>
-      <uwagi>"narzedzia spalinowe"</uwagi>
+      <rodzaj_czynnika>halas</rodzaj_czynnika>
+      <wyniki_pomiarow>82 dB</wyniki_pomiarow>
+      <NDS_NDN>0,5 NDN</NDS_NDN>
+      <uwagi>Odpylacze i osuszacze</uwagi>
     </czynnik>
 	 </tablica_szkodliwosci>
-  <dodatkowe_uwagi_A>"Wskazanie do dofinansowania sluchawek wygluszajacych."</dodatkowe_uwagi_A>
+  <dodatkowe_uwagi_A>Wskazanie do dofinansowania sluchawek wygłuszających.</dodatkowe_uwagi_A>
   <data>2018-03-12</data>
-  <zlecajacy>"Jan Nowak"</zlecajacy>
+  <zlecajacy>Jan Nowak</zlecajacy>
   <tablica_badan>
     <badanie_konsultacja>
-      <badanie>"Okulista"</badanie>
-      <czestotliwosc>"Raz na 5 lat"</czestotliwosc>
-      <uwagi>"Podczas pracy konieczne noszenie okularow"</uwagi>
+      <badanie>Okulista</badanie>
+      <czestotliwosc>Raz na 5 lat</czestotliwosc>
+      <uwagi>Podczas pracy konieczne noszenie okularów ochronnych</uwagi>
+    </badanie_konsultacja>
+	<badanie_konsultacja>
+      <badanie>Lekarz medycyny pracy</badanie>
+      <czestotliwosc>Raz na 5 lat</czestotliwosc>
+      <uwagi>Kontrola stanu słuchu co 5 lat</uwagi>
     </badanie_konsultacja>
   </tablica_badan>
-  <dodatkowe_uwagi_B>"Wskazanie do dofinansowania zakupu okularow"</dodatkowe_uwagi_B>
-  <lekarz>"dr. M. Malinowski"</lekarz>
+  <dodatkowe_uwagi_B>Wskazanie do dofinansowania zakupu okularów</dodatkowe_uwagi_B>
+  <lekarz>dr. M. Gniatkowski</lekarz>
 </skierowanie>

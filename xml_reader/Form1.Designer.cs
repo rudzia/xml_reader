@@ -31,10 +31,10 @@
             this.button_readXML = new System.Windows.Forms.Button();
             this.dane_tab = new System.Windows.Forms.TabControl();
             this.tab_dane = new System.Windows.Forms.TabPage();
+            this.maskedTextBox1 = new System.Windows.Forms.MaskedTextBox();
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.label18 = new System.Windows.Forms.Label();
             this.textBox15 = new System.Windows.Forms.TextBox();
-            this.textBox10 = new System.Windows.Forms.TextBox();
             this.textBox5 = new System.Windows.Forms.TextBox();
             this.label17 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
@@ -117,10 +117,10 @@
             // 
             // tab_dane
             // 
+            this.tab_dane.Controls.Add(this.maskedTextBox1);
             this.tab_dane.Controls.Add(this.dateTimePicker1);
             this.tab_dane.Controls.Add(this.label18);
             this.tab_dane.Controls.Add(this.textBox15);
-            this.tab_dane.Controls.Add(this.textBox10);
             this.tab_dane.Controls.Add(this.textBox5);
             this.tab_dane.Controls.Add(this.label17);
             this.tab_dane.Controls.Add(this.label16);
@@ -154,6 +154,16 @@
             this.tab_dane.Text = "Dane";
             this.tab_dane.UseVisualStyleBackColor = true;
             // 
+            // maskedTextBox1
+            // 
+            this.maskedTextBox1.Location = new System.Drawing.Point(15, 255);
+            this.maskedTextBox1.Mask = "00-000";
+            this.maskedTextBox1.Name = "maskedTextBox1";
+            this.maskedTextBox1.Size = new System.Drawing.Size(61, 20);
+            this.maskedTextBox1.TabIndex = 33;
+            this.maskedTextBox1.MaskInputRejected += new System.Windows.Forms.MaskInputRejectedEventHandler(this.maskedTextBox1_MaskInputRejected);
+            this.maskedTextBox1.Validating += new System.ComponentModel.CancelEventHandler(this.maskedTextBox1_Validating);
+            // 
             // dateTimePicker1
             // 
             this.dateTimePicker1.Location = new System.Drawing.Point(313, 252);
@@ -179,14 +189,7 @@
             this.textBox15.Size = new System.Drawing.Size(183, 20);
             this.textBox15.TabIndex = 30;
             this.textBox15.TextChanged += new System.EventHandler(this.textBox15_TextChanged);
-            // 
-            // textBox10
-            // 
-            this.textBox10.Location = new System.Drawing.Point(15, 255);
-            this.textBox10.Name = "textBox10";
-            this.textBox10.Size = new System.Drawing.Size(59, 20);
-            this.textBox10.TabIndex = 29;
-            this.textBox10.TextChanged += new System.EventHandler(this.textBox10_TextChanged);
+            this.textBox15.Validating += new System.ComponentModel.CancelEventHandler(this.textBox15_Validating);
             // 
             // textBox5
             // 
@@ -195,6 +198,7 @@
             this.textBox5.Size = new System.Drawing.Size(256, 20);
             this.textBox5.TabIndex = 28;
             this.textBox5.TextChanged += new System.EventHandler(this.textBox5_TextChanged);
+            this.textBox5.Validating += new System.ComponentModel.CancelEventHandler(this.textBox5_Validating);
             // 
             // label17
             // 
@@ -242,6 +246,7 @@
             this.textBox14.Size = new System.Drawing.Size(263, 20);
             this.textBox14.TabIndex = 23;
             this.textBox14.TextChanged += new System.EventHandler(this.textBox14_TextChanged);
+            this.textBox14.Validating += new System.ComponentModel.CancelEventHandler(this.textBox14_Validating);
             // 
             // label15
             // 
@@ -266,6 +271,7 @@
             this.comboBox1.Size = new System.Drawing.Size(121, 21);
             this.comboBox1.TabIndex = 19;
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.comboBox1.Validating += new System.ComponentModel.CancelEventHandler(this.comboBox1_Validating);
             // 
             // label10
             // 
@@ -283,6 +289,7 @@
             this.textBox9.Size = new System.Drawing.Size(263, 20);
             this.textBox9.TabIndex = 17;
             this.textBox9.TextChanged += new System.EventHandler(this.textBox9_TextChanged);
+            this.textBox9.Validating += new System.ComponentModel.CancelEventHandler(this.textBox9_Validating);
             // 
             // label9
             // 
@@ -300,6 +307,7 @@
             this.textBox8.Size = new System.Drawing.Size(263, 20);
             this.textBox8.TabIndex = 15;
             this.textBox8.TextChanged += new System.EventHandler(this.textBox8_TextChanged);
+            this.textBox8.Validating += new System.ComponentModel.CancelEventHandler(this.textBox8_Validating);
             // 
             // label8
             // 
@@ -318,6 +326,8 @@
             this.textBox7.Size = new System.Drawing.Size(127, 20);
             this.textBox7.TabIndex = 12;
             this.textBox7.TextChanged += new System.EventHandler(this.textBox7_TextChanged);
+            this.textBox7.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox7_KeyPress);
+            this.textBox7.Validating += new System.ComponentModel.CancelEventHandler(this.textBox7_Validating);
             // 
             // textBox6
             // 
@@ -326,6 +336,8 @@
             this.textBox6.Size = new System.Drawing.Size(127, 20);
             this.textBox6.TabIndex = 11;
             this.textBox6.TextChanged += new System.EventHandler(this.textBox6_TextChanged);
+            this.textBox6.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox6_KeyPress);
+            this.textBox6.Validating += new System.ComponentModel.CancelEventHandler(this.textBox6_Validating);
             // 
             // label6
             // 
@@ -352,6 +364,7 @@
             this.textBox4.Size = new System.Drawing.Size(127, 20);
             this.textBox4.TabIndex = 7;
             this.textBox4.TextChanged += new System.EventHandler(this.textBox4_TextChanged);
+            this.textBox4.Validating += new System.ComponentModel.CancelEventHandler(this.textBox4_Validating);
             // 
             // label4
             // 
@@ -399,6 +412,8 @@
             this.textBox3.Size = new System.Drawing.Size(258, 20);
             this.textBox3.TabIndex = 2;
             this.textBox3.TextChanged += new System.EventHandler(this.textBox3_TextChanged);
+            this.textBox3.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox3_KeyPress);
+            this.textBox3.Validating += new System.ComponentModel.CancelEventHandler(this.textBox3_Validating);
             // 
             // textBox2
             // 
@@ -407,6 +422,7 @@
             this.textBox2.Size = new System.Drawing.Size(258, 20);
             this.textBox2.TabIndex = 1;
             this.textBox2.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
+            this.textBox2.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox2_KeyPress);
             this.textBox2.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
             // 
             // textBox1
@@ -416,6 +432,7 @@
             this.textBox1.Size = new System.Drawing.Size(263, 20);
             this.textBox1.TabIndex = 0;
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
             // tab_szkodliwe
             // 
@@ -514,6 +531,8 @@
             this.textBox13.Name = "textBox13";
             this.textBox13.Size = new System.Drawing.Size(229, 20);
             this.textBox13.TabIndex = 4;
+            this.textBox13.TextChanged += new System.EventHandler(this.textBox13_TextChanged);
+            this.textBox13.Validating += new System.ComponentModel.CancelEventHandler(this.textBox13_Validating);
             // 
             // label14
             // 
@@ -685,7 +704,6 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox textBox15;
-        private System.Windows.Forms.TextBox textBox10;
         private System.Windows.Forms.TextBox textBox5;
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.StatusStrip statusStrip1;
@@ -705,6 +723,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn uwagi_B_column;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private System.Windows.Forms.MaskedTextBox maskedTextBox1;
     }
 }
 

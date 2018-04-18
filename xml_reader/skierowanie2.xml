@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<skierowanie nazwa_zakladu_pracy=Laboratorium ANCHEM>
+<skierowanie nazwa_zakladu_pracy="Laboratorium ANCHEM">
   <osoba>
     <imie>Zuzanna</imie>
     <nazwisko>Przyborowska</nazwisko>
@@ -11,25 +11,25 @@
     <stanowisko>Laborant</stanowisko>
     <regon>125486974</regon>
     <obecne_stanowisko>Bezrobotny</obecne_stanowisko>
-    <rodzaj_badania>wstepne</rodzaj_badania>
+    <rodzaj_badania>wst?pne</rodzaj_badania>
   </osoba>
   <tablica_szkodliwosci>
     <czynnik>
       <rodzaj_czynnika>halas</rodzaj_czynnika>
       <wyniki_pomiarow>82 dB</wyniki_pomiarow>
-      <NDS_NDN.0,5 NDN</NDS_NDN>
-      <uwagi>"narzedzia spalinowe"</uwagi>
+      <NDS_NDN>0,5 NDN</NDS_NDN>
+      <uwagi>narzedzia spalinowe</uwagi>
     </czynnik>
     <czynnik>
       <rodzaj_czynnika>Czynnik chemiczny: Terpentyna</rodzaj_czynnika>
       <wyniki_pomiarow>14,5 mg/m3</wyniki_pomiarow>
       <NDS_NDN>0,13 NDS</NDS_NDN>
-      <uwagi>"brak"</uwagi>
+      <uwagi>brak</uwagi>
     </czynnik>
   </tablica_szkodliwosci>
   <dodatkowe_uwagi_A>Wskazanie do dofinansowania sluchawek wygluszajacych.</dodatkowe_uwagi_A>
   <data>2018-03-12</data>
-  <zlecajacy>"Jan Nowak"</zlecajacy>
+  <zlecajacy>Jan Nowak</zlecajacy>
   <tablica_badan>
     <badanie_konsultacja>
       <badanie>Okulista</badanie>
