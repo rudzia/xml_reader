@@ -12,6 +12,9 @@ using System.Xml;
 using System.Xml.Schema;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Diagnostics;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
 
 namespace xml_reader
 {
@@ -99,11 +102,10 @@ namespace xml_reader
             dataGridView1.Rows.Add(skierowanie.tablica_szkodliwosci.Length);
             for (int i = 0; i < skierowanie.tablica_szkodliwosci.Length; i++)
             {
-                dataGridView1.Rows[i].Cells[0].Value = (i + 1).ToString();
-                dataGridView1.Rows[i].Cells[1].Value = skierowanie.tablica_szkodliwosci[i].rodzaj_czynnika;
-                dataGridView1.Rows[i].Cells[2].Value = skierowanie.tablica_szkodliwosci[i].wyniki_pomiarow;
-                dataGridView1.Rows[i].Cells[3].Value = skierowanie.tablica_szkodliwosci[i].NDS_NDN;
-                dataGridView1.Rows[i].Cells[4].Value = skierowanie.tablica_szkodliwosci[i].uwagi;
+                dataGridView1.Rows[i].Cells[0].Value = skierowanie.tablica_szkodliwosci[i].rodzaj_czynnika;
+                dataGridView1.Rows[i].Cells[1].Value = skierowanie.tablica_szkodliwosci[i].wyniki_pomiarow;
+                dataGridView1.Rows[i].Cells[2].Value = skierowanie.tablica_szkodliwosci[i].NDS_NDN;
+                dataGridView1.Rows[i].Cells[3].Value = skierowanie.tablica_szkodliwosci[i].uwagi;
             };
 
             dataGridView2.Rows.Clear();
@@ -184,6 +186,51 @@ namespace xml_reader
             }
         }
 
+        //C# function for using Apache FOP to generate PDF from XML
+        //Author: Jaroslaw Magiera, Gdansk Universtiy of Technology
+        private void exportToPdfButton_Click(object sender, EventArgs e)
+        {
+            //Create a batch file
+            String fopDir = "D:\\IBM\\semestr 3\\dokumenty cyfrowe\\zadanie 3\\fop-1.1\\fop-1.1"; //Apache FOP working directory
+	        String xmlDir = ".\\"; //Directory where XML resides (Our apllication working directory)
+            String xslDir = ".\\"; //Directory where XSL resides (Our apllication working directory)
+            String pdfDir = ".\\"; //Directory where PDFs will be saved (Our apllication working directory)
+            String fopXconfFile = "fop.xconf"; //FOP configuration file (necessary to import Windows system fonts)
+            String xmlFile = "zamowienie_mod.xml"; //Input XML file name
+            String xslFile = "zamowienie_fo.xsl"; //Input XSL file name
+            String pdfFile = "zamowienie_mod.pdf"; //Output PDF file name
+            FileStream fs = new FileStream("pdfexport.bat", FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs);
+            //Writing Windows commands in separate lines of our batch (*.bat) file
+            sw.WriteLine("call {0}fop -c {1}{2} -xml {3}{4} -xsl {5}{6} -pdf {7}{8}", fopDir, fopDir, fopXconfFile, xmlDir, xmlFile, xslDir, xslFile, pdfDir, pdfFile, fopDir);
+            sw.WriteLine("pause"); //the above "call" is needed to execute the "pause" command after FOP exits
+            sw.Close();
+            fs.Close();
+
+            // Start the pdf export process
+            //using System.Diagnostics
+            Process p = new Process();
+            p.StartInfo.UseShellExecute = true;
+            p.StartInfo.RedirectStandardOutput = false;
+            p.StartInfo.FileName = "pdfexport.bat"; //Batch file created in application working directory
+            p.Start();
+            p.WaitForExit(); //Wait for PDF generation before opening it
+
+
+            // Start process opening generated PDF
+            p = new Process();
+            p.StartInfo.UseShellExecute = true;
+            p.StartInfo.RedirectStandardOutput = false;
+            try
+            {
+                p.StartInfo.FileName = pdfDir + pdfFile;
+                p.Start();
+                //p.WaitForExit(); //If this line was left uncommented, our application would be inactive until PDF browser was closed
+
+            }
+            catch (Exception exc) { } //Here you can catch exception if PDF cannot be opened for some reason
+        }
+
         private void label1_Click(object sender, EventArgs e)
         {
 
@@ -233,12 +280,12 @@ namespace xml_reader
         }
         private void dataGridView1_RowValidated(object sender, DataGridViewCellEventArgs e)
         {
-           // updateTablcaSzkodliwosci();
+           //updateTablcaSzkodliwosci();
         }
 
         private void dataGridView1_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
         {
-           // updateTablcaSzkodliwosci();
+           //updateTablcaSzkodliwosci(); tu musi byc inna obsluga tablicy
         }
 
         private void label16_Click(object sender, EventArgs e)
@@ -643,6 +690,60 @@ namespace xml_reader
         private void textBox3_KeyPress(object sender, KeyPressEventArgs e)
         {
 
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            //exportToPdfButton_Click(sender, e);
+            Document doc = new Document(iTextSharp.text.PageSize.LETTER, 10, 10, 42, 35);
+            PdfWriter wri = PdfWriter.GetInstance(doc, new FileStream("test.pdf", FileMode.Create));
+            doc.Open();//open doc to write
+            //write some context
+            Paragraph p = new Paragraph("bla bla");
+            doc.Add(p);
+            PdfPTable tablica_szkodliwosci = new PdfPTable(dataGridView1.Columns.Count);
+            //add headers
+            for (int i = 0; i < dataGridView1.Columns.Count; ++i)
+            {
+                tablica_szkodliwosci.AddCell(new Phrase(dataGridView1.Columns[i].HeaderText));
+            }
+
+            //flag the first row as a header
+            tablica_szkodliwosci.HeaderRows = 1;
+
+            //add the actual rows to the table
+            for (int i = 0; i < dataGridView1.Rows.Count; ++i)
+            {
+                for (int j = 0; j < dataGridView1.Columns.Count; ++j)
+                {
+                    if (dataGridView1[j, i].Value != null)
+                    {
+                        tablica_szkodliwosci.AddCell(new Phrase(dataGridView1[j, i].Value.ToString()));
+                    }
+                }
+            }
+            /*
+            PdfPTable table_szkodliwosc = new PdfPTable(4);
+            table_szkodliwosc.AddCell("Rodzaj szkodliwości i uciążliwości na stanowisku pracy");
+            table_szkodliwosc.AddCell("Wyniki pomiarow");
+            table_szkodliwosc.AddCell("NDS \nNDN");
+            table_szkodliwosc.AddCell("Uwagi:");
+
+            table_szkodliwosc.AddCell(skierowanie.tablica_szkodliwosci[0].rodzaj_czynnika);
+            table_szkodliwosc.AddCell(skierowanie.tablica_szkodliwosci[0].wyniki_pomiarow);
+            table_szkodliwosc.AddCell(skierowanie.tablica_szkodliwosci[0].NDS_NDN);
+            table_szkodliwosc.AddCell(skierowanie.tablica_szkodliwosci[0].uwagi);
+            */
+            doc.Add(tablica_szkodliwosci);
+            
+            doc.Close();
+        }
+
+        private void button_NowyPlik_Click(object sender, EventArgs e)
+        {
+            this.Hide();//how to close it?
+            Form1 newFile = new Form1();
+            newFile.Show();
         }
     }
 

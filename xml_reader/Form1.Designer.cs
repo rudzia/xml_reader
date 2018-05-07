@@ -64,11 +64,6 @@
             this.textBox11 = new System.Windows.Forms.TextBox();
             this.label12 = new System.Windows.Forms.Label();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.nr_column = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.szkodliwy_czynnik_column = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.wyniki_pomiarow_column = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.NDS_NSN_column = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.uwagi_A_column = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tab_badania = new System.Windows.Forms.TabPage();
             this.textBox13 = new System.Windows.Forms.TextBox();
             this.label14 = new System.Windows.Forms.Label();
@@ -85,6 +80,12 @@
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button_NowyPlik = new System.Windows.Forms.Button();
+            this.szkodliwy_czynnik_column = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.wyniki_pomiarow_column = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.NDS_NSN_column = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.uwagi_A_column = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dane_tab.SuspendLayout();
             this.tab_dane.SuspendLayout();
             this.tab_szkodliwe.SuspendLayout();
@@ -96,7 +97,7 @@
             // 
             // button_readXML
             // 
-            this.button_readXML.Location = new System.Drawing.Point(121, 446);
+            this.button_readXML.Location = new System.Drawing.Point(31, 446);
             this.button_readXML.Name = "button_readXML";
             this.button_readXML.Size = new System.Drawing.Size(108, 23);
             this.button_readXML.TabIndex = 0;
@@ -467,7 +468,6 @@
             // 
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.nr_column,
             this.szkodliwy_czynnik_column,
             this.wyniki_pomiarow_column,
             this.NDS_NSN_column,
@@ -479,36 +479,6 @@
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             this.dataGridView1.RowValidated += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_RowValidated);
             this.dataGridView1.UserDeletedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dataGridView1_UserDeletedRow);
-            // 
-            // nr_column
-            // 
-            this.nr_column.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.nr_column.HeaderText = "Nr.";
-            this.nr_column.Name = "nr_column";
-            this.nr_column.Width = 46;
-            // 
-            // szkodliwy_czynnik_column
-            // 
-            this.szkodliwy_czynnik_column.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.szkodliwy_czynnik_column.HeaderText = "Rodzaj szkodliwosci i uciazliwosci na stanowisku pracy";
-            this.szkodliwy_czynnik_column.MinimumWidth = 10;
-            this.szkodliwy_czynnik_column.Name = "szkodliwy_czynnik_column";
-            this.szkodliwy_czynnik_column.Width = 148;
-            // 
-            // wyniki_pomiarow_column
-            // 
-            this.wyniki_pomiarow_column.HeaderText = "Wyniki pomiarow";
-            this.wyniki_pomiarow_column.Name = "wyniki_pomiarow_column";
-            // 
-            // NDS_NSN_column
-            // 
-            this.NDS_NSN_column.HeaderText = "NDS NDN";
-            this.NDS_NSN_column.Name = "NDS_NSN_column";
-            // 
-            // uwagi_A_column
-            // 
-            this.uwagi_A_column.HeaderText = "Uwagi";
-            this.uwagi_A_column.Name = "uwagi_A_column";
             // 
             // tab_badania
             // 
@@ -601,11 +571,11 @@
             // 
             // button_validatesave
             // 
-            this.button_validatesave.Location = new System.Drawing.Point(390, 446);
+            this.button_validatesave.Location = new System.Drawing.Point(266, 446);
             this.button_validatesave.Name = "button_validatesave";
             this.button_validatesave.Size = new System.Drawing.Size(154, 23);
             this.button_validatesave.TabIndex = 2;
-            this.button_validatesave.Text = "Waliduj i zapisz xml";
+            this.button_validatesave.Text = "waliduj i zapisz jako XML";
             this.button_validatesave.UseVisualStyleBackColor = true;
             this.button_validatesave.Click += new System.EventHandler(this.button_validatesave_Click);
             // 
@@ -635,11 +605,56 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(433, 446);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(159, 23);
+            this.button1.TabIndex = 4;
+            this.button1.Text = "waliduj i zapisz jako PDF";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click_1);
+            // 
+            // button_NowyPlik
+            // 
+            this.button_NowyPlik.Location = new System.Drawing.Point(146, 445);
+            this.button_NowyPlik.Name = "button_NowyPlik";
+            this.button_NowyPlik.Size = new System.Drawing.Size(75, 23);
+            this.button_NowyPlik.TabIndex = 5;
+            this.button_NowyPlik.Text = "nowy plik";
+            this.button_NowyPlik.UseVisualStyleBackColor = true;
+            this.button_NowyPlik.Click += new System.EventHandler(this.button_NowyPlik_Click);
+            // 
+            // szkodliwy_czynnik_column
+            // 
+            this.szkodliwy_czynnik_column.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.szkodliwy_czynnik_column.HeaderText = "Rodzaj szkodliwosci i uciazliwosci na stanowisku pracy";
+            this.szkodliwy_czynnik_column.MinimumWidth = 10;
+            this.szkodliwy_czynnik_column.Name = "szkodliwy_czynnik_column";
+            this.szkodliwy_czynnik_column.Width = 148;
+            // 
+            // wyniki_pomiarow_column
+            // 
+            this.wyniki_pomiarow_column.HeaderText = "Wyniki pomiarow";
+            this.wyniki_pomiarow_column.Name = "wyniki_pomiarow_column";
+            // 
+            // NDS_NSN_column
+            // 
+            this.NDS_NSN_column.HeaderText = "NDS NDN";
+            this.NDS_NSN_column.Name = "NDS_NSN_column";
+            // 
+            // uwagi_A_column
+            // 
+            this.uwagi_A_column.HeaderText = "Uwagi";
+            this.uwagi_A_column.Name = "uwagi_A_column";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(638, 508);
+            this.Controls.Add(this.button_NowyPlik);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.button_validatesave);
             this.Controls.Add(this.dane_tab);
@@ -712,11 +727,6 @@
         private System.Windows.Forms.DateTimePicker dateTimePicker1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
-        private System.Windows.Forms.DataGridViewTextBoxColumn nr_column;
-        private System.Windows.Forms.DataGridViewTextBoxColumn szkodliwy_czynnik_column;
-        private System.Windows.Forms.DataGridViewTextBoxColumn wyniki_pomiarow_column;
-        private System.Windows.Forms.DataGridViewTextBoxColumn NDS_NSN_column;
-        private System.Windows.Forms.DataGridViewTextBoxColumn uwagi_A_column;
         private System.Windows.Forms.DataGridViewTextBoxColumn nr_columnB;
         private System.Windows.Forms.DataGridViewTextBoxColumn badanie_column;
         private System.Windows.Forms.DataGridViewTextBoxColumn czestotliwosc_column;
@@ -724,6 +734,12 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.MaskedTextBox maskedTextBox1;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button_NowyPlik;
+        private System.Windows.Forms.DataGridViewTextBoxColumn szkodliwy_czynnik_column;
+        private System.Windows.Forms.DataGridViewTextBoxColumn wyniki_pomiarow_column;
+        private System.Windows.Forms.DataGridViewTextBoxColumn NDS_NSN_column;
+        private System.Windows.Forms.DataGridViewTextBoxColumn uwagi_A_column;
     }
 }
 
