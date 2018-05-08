@@ -112,10 +112,9 @@ namespace xml_reader
             dataGridView2.Rows.Add(skierowanie.tablica_badan.Length);
             for (int i = 0; i < skierowanie.tablica_badan.Length; i++)
             {
-                dataGridView2.Rows[i].Cells[0].Value = (i + 1).ToString();
-                dataGridView2.Rows[i].Cells[1].Value = skierowanie.tablica_badan[i].badanie;
-                dataGridView2.Rows[i].Cells[2].Value = skierowanie.tablica_badan[i].czestotliwosc;
-                dataGridView2.Rows[i].Cells[3].Value = skierowanie.tablica_badan[i].uwagi;
+                dataGridView2.Rows[i].Cells[0].Value = skierowanie.tablica_badan[i].badanie;
+                dataGridView2.Rows[i].Cells[1].Value = skierowanie.tablica_badan[i].czestotliwosc;
+                dataGridView2.Rows[i].Cells[2].Value = skierowanie.tablica_badan[i].uwagi;
             };
             toolStripStatusLabel1.Text = "Status: ";
             toolStripStatusLabel2.Text = "Wypełniono formularz danymi z pliku .xml";
@@ -698,14 +697,16 @@ namespace xml_reader
             Document doc = new Document(iTextSharp.text.PageSize.LETTER, 10, 10, 42, 35);
             PdfWriter wri = PdfWriter.GetInstance(doc, new FileStream("test.pdf", FileMode.Create));
             doc.Open();//open doc to write
-            //write some context
-            Paragraph p = new Paragraph("bla bla");
+            //set polish font
+            var font = new iTextSharp.text.Font(BaseFont.CreateFont(@"C:\Windows\Fonts\Arial.ttf", BaseFont.CP1250, true));
+  
+            Paragraph p = new Paragraph("łłłła",font);
             doc.Add(p);
             PdfPTable tablica_szkodliwosci = new PdfPTable(dataGridView1.Columns.Count);
             //add headers
             for (int i = 0; i < dataGridView1.Columns.Count; ++i)
             {
-                tablica_szkodliwosci.AddCell(new Phrase(dataGridView1.Columns[i].HeaderText));
+                tablica_szkodliwosci.AddCell(new Phrase(dataGridView1.Columns[i].HeaderText, font));
             }
 
             //flag the first row as a header
@@ -718,24 +719,38 @@ namespace xml_reader
                 {
                     if (dataGridView1[j, i].Value != null)
                     {
-                        tablica_szkodliwosci.AddCell(new Phrase(dataGridView1[j, i].Value.ToString()));
+                        tablica_szkodliwosci.AddCell(new Phrase(dataGridView1[j, i].Value.ToString(), font));
                     }
                 }
             }
-            /*
-            PdfPTable table_szkodliwosc = new PdfPTable(4);
-            table_szkodliwosc.AddCell("Rodzaj szkodliwości i uciążliwości na stanowisku pracy");
-            table_szkodliwosc.AddCell("Wyniki pomiarow");
-            table_szkodliwosc.AddCell("NDS \nNDN");
-            table_szkodliwosc.AddCell("Uwagi:");
 
-            table_szkodliwosc.AddCell(skierowanie.tablica_szkodliwosci[0].rodzaj_czynnika);
-            table_szkodliwosc.AddCell(skierowanie.tablica_szkodliwosci[0].wyniki_pomiarow);
-            table_szkodliwosc.AddCell(skierowanie.tablica_szkodliwosci[0].NDS_NDN);
-            table_szkodliwosc.AddCell(skierowanie.tablica_szkodliwosci[0].uwagi);
-            */
             doc.Add(tablica_szkodliwosci);
-            
+            Paragraph new_line = new Paragraph("\n");
+            doc.Add(new_line);
+
+            PdfPTable tablica_badan = new PdfPTable(dataGridView2.Columns.Count);
+            //add headers
+            for (int i = 0; i < dataGridView2.Columns.Count; ++i)
+            {
+                tablica_badan.AddCell(new Phrase(dataGridView2.Columns[i].HeaderText, font));
+            }
+
+            //flag the first row as a header
+            tablica_badan.HeaderRows = 1;
+
+            //add the actual rows to the table
+            for (int i = 0; i < dataGridView2.Rows.Count; ++i)
+            {
+                for (int j = 0; j < dataGridView2.Columns.Count; ++j)
+                {
+                    if (dataGridView2[j, i].Value != null)
+                    {
+                        tablica_badan.AddCell(new Phrase(dataGridView2[j, i].Value.ToString(), font));
+                    }
+                }
+            }
+
+            doc.Add(tablica_badan);
             doc.Close();
         }
 

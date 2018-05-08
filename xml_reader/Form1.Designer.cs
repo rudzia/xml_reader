@@ -64,13 +64,16 @@
             this.textBox11 = new System.Windows.Forms.TextBox();
             this.label12 = new System.Windows.Forms.Label();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.szkodliwy_czynnik_column = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.wyniki_pomiarow_column = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.NDS_NSN_column = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.uwagi_A_column = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tab_badania = new System.Windows.Forms.TabPage();
             this.textBox13 = new System.Windows.Forms.TextBox();
             this.label14 = new System.Windows.Forms.Label();
             this.textBox12 = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
-            this.nr_columnB = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.badanie_column = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.czestotliwosc_column = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.uwagi_B_column = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -82,10 +85,6 @@
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.button1 = new System.Windows.Forms.Button();
             this.button_NowyPlik = new System.Windows.Forms.Button();
-            this.szkodliwy_czynnik_column = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.wyniki_pomiarow_column = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.NDS_NSN_column = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.uwagi_A_column = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dane_tab.SuspendLayout();
             this.tab_dane.SuspendLayout();
             this.tab_szkodliwe.SuspendLayout();
@@ -480,6 +479,29 @@
             this.dataGridView1.RowValidated += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_RowValidated);
             this.dataGridView1.UserDeletedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dataGridView1_UserDeletedRow);
             // 
+            // szkodliwy_czynnik_column
+            // 
+            this.szkodliwy_czynnik_column.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.szkodliwy_czynnik_column.HeaderText = "Rodzaj szkodliwosci i uciazliwosci na stanowisku pracy";
+            this.szkodliwy_czynnik_column.MinimumWidth = 10;
+            this.szkodliwy_czynnik_column.Name = "szkodliwy_czynnik_column";
+            this.szkodliwy_czynnik_column.Width = 148;
+            // 
+            // wyniki_pomiarow_column
+            // 
+            this.wyniki_pomiarow_column.HeaderText = "Wyniki pomiarow";
+            this.wyniki_pomiarow_column.Name = "wyniki_pomiarow_column";
+            // 
+            // NDS_NSN_column
+            // 
+            this.NDS_NSN_column.HeaderText = "NDS NDN";
+            this.NDS_NSN_column.Name = "NDS_NSN_column";
+            // 
+            // uwagi_A_column
+            // 
+            this.uwagi_A_column.HeaderText = "Uwagi";
+            this.uwagi_A_column.Name = "uwagi_A_column";
+            // 
             // tab_badania
             // 
             this.tab_badania.Controls.Add(this.textBox13);
@@ -533,24 +555,16 @@
             // 
             this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView2.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.nr_columnB,
             this.badanie_column,
             this.czestotliwosc_column,
             this.uwagi_B_column});
             this.dataGridView2.Location = new System.Drawing.Point(20, 25);
             this.dataGridView2.Name = "dataGridView2";
-            this.dataGridView2.Size = new System.Drawing.Size(645, 239);
+            this.dataGridView2.Size = new System.Drawing.Size(590, 232);
             this.dataGridView2.TabIndex = 0;
             this.dataGridView2.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView2_CellContentClick);
             this.dataGridView2.RowValidated += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView2_RowValidated);
             this.dataGridView2.UserDeletedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dataGridView2_UserDeletedRow);
-            // 
-            // nr_columnB
-            // 
-            this.nr_columnB.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.nr_columnB.HeaderText = "Nr.";
-            this.nr_columnB.Name = "nr_columnB";
-            this.nr_columnB.Width = 46;
             // 
             // badanie_column
             // 
@@ -624,29 +638,6 @@
             this.button_NowyPlik.Text = "nowy plik";
             this.button_NowyPlik.UseVisualStyleBackColor = true;
             this.button_NowyPlik.Click += new System.EventHandler(this.button_NowyPlik_Click);
-            // 
-            // szkodliwy_czynnik_column
-            // 
-            this.szkodliwy_czynnik_column.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.szkodliwy_czynnik_column.HeaderText = "Rodzaj szkodliwosci i uciazliwosci na stanowisku pracy";
-            this.szkodliwy_czynnik_column.MinimumWidth = 10;
-            this.szkodliwy_czynnik_column.Name = "szkodliwy_czynnik_column";
-            this.szkodliwy_czynnik_column.Width = 148;
-            // 
-            // wyniki_pomiarow_column
-            // 
-            this.wyniki_pomiarow_column.HeaderText = "Wyniki pomiarow";
-            this.wyniki_pomiarow_column.Name = "wyniki_pomiarow_column";
-            // 
-            // NDS_NSN_column
-            // 
-            this.NDS_NSN_column.HeaderText = "NDS NDN";
-            this.NDS_NSN_column.Name = "NDS_NSN_column";
-            // 
-            // uwagi_A_column
-            // 
-            this.uwagi_A_column.HeaderText = "Uwagi";
-            this.uwagi_A_column.Name = "uwagi_A_column";
             // 
             // Form1
             // 
@@ -727,10 +718,6 @@
         private System.Windows.Forms.DateTimePicker dateTimePicker1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
-        private System.Windows.Forms.DataGridViewTextBoxColumn nr_columnB;
-        private System.Windows.Forms.DataGridViewTextBoxColumn badanie_column;
-        private System.Windows.Forms.DataGridViewTextBoxColumn czestotliwosc_column;
-        private System.Windows.Forms.DataGridViewTextBoxColumn uwagi_B_column;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.MaskedTextBox maskedTextBox1;
@@ -740,6 +727,9 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn wyniki_pomiarow_column;
         private System.Windows.Forms.DataGridViewTextBoxColumn NDS_NSN_column;
         private System.Windows.Forms.DataGridViewTextBoxColumn uwagi_A_column;
+        private System.Windows.Forms.DataGridViewTextBoxColumn badanie_column;
+        private System.Windows.Forms.DataGridViewTextBoxColumn czestotliwosc_column;
+        private System.Windows.Forms.DataGridViewTextBoxColumn uwagi_B_column;
     }
 }
 
