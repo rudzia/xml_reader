@@ -694,19 +694,35 @@ namespace xml_reader
         private void button1_Click_1(object sender, EventArgs e)
         {
             //exportToPdfButton_Click(sender, e);
-            Document doc = new Document(iTextSharp.text.PageSize.LETTER, 10, 10, 42, 35);
+            Document doc = new Document(iTextSharp.text.PageSize.A4, 10, 10, 10, 10);
             PdfWriter wri = PdfWriter.GetInstance(doc, new FileStream("test.pdf", FileMode.Create));
             doc.Open();//open doc to write
-            //set polish font
-            var font = new iTextSharp.text.Font(BaseFont.CreateFont(@"C:\Windows\Fonts\Arial.ttf", BaseFont.CP1250, true));
-  
-            Paragraph p = new Paragraph("łłłła",font);
+            Paragraph new_line = new Paragraph("\n");
+            //set fonts
+            BaseFont bf = BaseFont.CreateFont(BaseFont.TIMES_ROMAN, BaseFont.CP1250, true);
+            var fontBig = new iTextSharp.text.Font(bf, 15);
+            var font = new iTextSharp.text.Font(BaseFont.CreateFont(BaseFont.TIMES_ROMAN, BaseFont.CP1250, true));
+
+            Paragraph p = new Paragraph("Skierowanie na badania profilaktyczne",fontBig);
+            p.Alignment = Element.ALIGN_CENTER;
             doc.Add(p);
+            doc.Add(new_line);
+
+            PdfPTable A = new PdfPTable(1);
+            A.AddCell("A.");
+            //A.TotalWidth = 10f;
+            A.HorizontalAlignment = Element.ALIGN_LEFT;
+            A.WidthPercentage = 5;
+            doc.Add(A);
+            doc.Add(new_line);
+
             PdfPTable tablica_szkodliwosci = new PdfPTable(dataGridView1.Columns.Count);
             //add headers
             for (int i = 0; i < dataGridView1.Columns.Count; ++i)
             {
-                tablica_szkodliwosci.AddCell(new Phrase(dataGridView1.Columns[i].HeaderText, font));
+                PdfPCell cell = new PdfPCell(new Phrase(dataGridView1.Columns[i].HeaderText, font));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                tablica_szkodliwosci.AddCell(cell);
             }
 
             //flag the first row as a header
@@ -719,13 +735,22 @@ namespace xml_reader
                 {
                     if (dataGridView1[j, i].Value != null)
                     {
-                        tablica_szkodliwosci.AddCell(new Phrase(dataGridView1[j, i].Value.ToString(), font));
+                        PdfPCell cell = new PdfPCell(new Phrase(dataGridView1[j, i].Value.ToString(), font));
+                        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                        tablica_szkodliwosci.AddCell(cell);
                     }
                 }
             }
 
             doc.Add(tablica_szkodliwosci);
-            Paragraph new_line = new Paragraph("\n");
+            doc.Add(new_line);
+
+            PdfPTable B = new PdfPTable(1);
+            B.AddCell("B.");
+            //A.TotalWidth = 10f;
+            B.HorizontalAlignment = Element.ALIGN_LEFT;
+            B.WidthPercentage = 5;
+            doc.Add(B);
             doc.Add(new_line);
 
             PdfPTable tablica_badan = new PdfPTable(dataGridView2.Columns.Count);
