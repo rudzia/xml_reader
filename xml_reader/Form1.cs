@@ -701,7 +701,7 @@ namespace xml_reader
             //set fonts
             BaseFont bf = BaseFont.CreateFont(BaseFont.TIMES_ROMAN, BaseFont.CP1250, true);
             var fontBig = new iTextSharp.text.Font(bf, 15);
-            var font = new iTextSharp.text.Font(BaseFont.CreateFont(BaseFont.TIMES_ROMAN, BaseFont.CP1250, true));
+            var fontSmall = new iTextSharp.text.Font(bf, 11);
 
             Paragraph p = new Paragraph("Skierowanie na badania profilaktyczne",fontBig);
             p.Alignment = Element.ALIGN_CENTER;
@@ -720,7 +720,7 @@ namespace xml_reader
             //add headers
             for (int i = 0; i < dataGridView1.Columns.Count; ++i)
             {
-                PdfPCell cell = new PdfPCell(new Phrase(dataGridView1.Columns[i].HeaderText, font));
+                PdfPCell cell = new PdfPCell(new Phrase(dataGridView1.Columns[i].HeaderText, fontSmall));
                 cell.HorizontalAlignment = Element.ALIGN_CENTER;
                 tablica_szkodliwosci.AddCell(cell);
             }
@@ -735,16 +735,23 @@ namespace xml_reader
                 {
                     if (dataGridView1[j, i].Value != null)
                     {
-                        PdfPCell cell = new PdfPCell(new Phrase(dataGridView1[j, i].Value.ToString(), font));
+                        PdfPCell cell = new PdfPCell(new Phrase(dataGridView1[j, i].Value.ToString(), fontSmall));
                         cell.HorizontalAlignment = Element.ALIGN_CENTER;
                         tablica_szkodliwosci.AddCell(cell);
                     }
                 }
             }
-
             doc.Add(tablica_szkodliwosci);
-            doc.Add(new_line);
 
+            Paragraph uwagiA;
+            if (skierowanie.dodatkowe_uwagi_B == null)
+                uwagiA = new Paragraph("Dodatkowe uwagi: ", fontSmall);
+            else
+                uwagiA = new Paragraph("Dodatkowe uwagi: " + skierowanie.dodatkowe_uwagi_A.ToString(), fontSmall);
+            uwagiA.Alignment = Element.ALIGN_LEFT;
+            doc.Add(uwagiA);
+            doc.Add(new_line);
+            
             PdfPTable B = new PdfPTable(1);
             B.AddCell("B.");
             //A.TotalWidth = 10f;
@@ -757,7 +764,9 @@ namespace xml_reader
             //add headers
             for (int i = 0; i < dataGridView2.Columns.Count; ++i)
             {
-                tablica_badan.AddCell(new Phrase(dataGridView2.Columns[i].HeaderText, font));
+                PdfPCell cell = new PdfPCell(new Phrase(dataGridView2.Columns[i].HeaderText, fontSmall));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                tablica_badan.AddCell(cell);
             }
 
             //flag the first row as a header
@@ -770,12 +779,24 @@ namespace xml_reader
                 {
                     if (dataGridView2[j, i].Value != null)
                     {
-                        tablica_badan.AddCell(new Phrase(dataGridView2[j, i].Value.ToString(), font));
+                        PdfPCell cell = new PdfPCell(new Phrase(dataGridView2[j, i].Value.ToString(), fontSmall));
+                        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                        tablica_badan.AddCell(cell);
                     }
                 }
             }
-
             doc.Add(tablica_badan);
+
+            Paragraph uwagiB;
+            if (skierowanie.dodatkowe_uwagi_B == null)
+                uwagiB = new Paragraph("Dodatkowe uwagi: ", fontSmall);
+            else
+                uwagiB = new Paragraph("Dodatkowe uwagi: " + skierowanie.dodatkowe_uwagi_B.ToString(), fontSmall);
+            
+            uwagiB.Alignment = Element.ALIGN_LEFT;
+            doc.Add(uwagiB);
+            doc.Add(new_line);
+
             doc.Close();
         }
 

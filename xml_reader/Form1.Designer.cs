@@ -78,13 +78,13 @@
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.button1 = new System.Windows.Forms.Button();
             this.button_NowyPlik = new System.Windows.Forms.Button();
+            this.badanie_column = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.czestotliwosc_column = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.uwagi_B_column = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.szkodliwy_czynnik_column = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.wyniki_pomiarow_column = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.NDS_NSN_column = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.uwagi_A_column = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.badanie_column = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.czestotliwosc_column = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.uwagi_B_column = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dane_tab.SuspendLayout();
             this.tab_dane.SuspendLayout();
             this.tab_szkodliwe.SuspendLayout();
@@ -599,6 +599,23 @@
             this.button_NowyPlik.UseVisualStyleBackColor = true;
             this.button_NowyPlik.Click += new System.EventHandler(this.button_NowyPlik_Click);
             // 
+            // badanie_column
+            // 
+            this.badanie_column.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.badanie_column.HeaderText = "Rodzaj badania lekarskiego lub konsultacji";
+            this.badanie_column.Name = "badanie_column";
+            this.badanie_column.Width = 167;
+            // 
+            // czestotliwosc_column
+            // 
+            this.czestotliwosc_column.HeaderText = "Częstotliwość";
+            this.czestotliwosc_column.Name = "czestotliwosc_column";
+            // 
+            // uwagi_B_column
+            // 
+            this.uwagi_B_column.HeaderText = "Uwagi";
+            this.uwagi_B_column.Name = "uwagi_B_column";
+            // 
             // szkodliwy_czynnik_column
             // 
             this.szkodliwy_czynnik_column.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
@@ -619,25 +636,8 @@
             // 
             // uwagi_A_column
             // 
-            this.uwagi_A_column.HeaderText = "Uwagi:";
+            this.uwagi_A_column.HeaderText = "Uwagi";
             this.uwagi_A_column.Name = "uwagi_A_column";
-            // 
-            // badanie_column
-            // 
-            this.badanie_column.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.badanie_column.HeaderText = "Rodzaj badania lekarskiego lub konsultacji";
-            this.badanie_column.Name = "badanie_column";
-            this.badanie_column.Width = 167;
-            // 
-            // czestotliwosc_column
-            // 
-            this.czestotliwosc_column.HeaderText = "Częstotliwość";
-            this.czestotliwosc_column.Name = "czestotliwosc_column";
-            // 
-            // uwagi_B_column
-            // 
-            this.uwagi_B_column.HeaderText = "Uwagi:";
-            this.uwagi_B_column.Name = "uwagi_B_column";
             // 
             // Form1
             // 
