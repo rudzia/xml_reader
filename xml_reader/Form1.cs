@@ -25,7 +25,6 @@ namespace xml_reader
         private
             XmlSerializer xmlserializer; //Object used for serialization and deserialization
             pola_skierowania skierowanie;//Object containing data from XML "skierowanie.xml"
-            static bool XMLValid; //XML validity flag
 
         public Form1()
         {
@@ -173,20 +172,6 @@ namespace xml_reader
             }
             
         }
-        private void updateTablcaSzkodliwosci() //metoda do obslugi tabeli
-        {
-            skierowanie.tablica_szkodliwosci = new SzkodliweCzynnik[dataGridView1.RowCount - 1];
-            for (int i = 0; i < dataGridView1.RowCount - 1; i++)
-            {
-                dataGridView1.Rows[i].Cells[0].Value = i + 1;
-                skierowanie.tablica_szkodliwosci[i] = new SzkodliweCzynnik();
-                skierowanie.tablica_szkodliwosci[i].rodzaj_czynnika = dataGridView1.Rows[i].Cells[1].Value.ToString();
-                skierowanie.tablica_szkodliwosci[i].wyniki_pomiarow = dataGridView1.Rows[i].Cells[2].Value.ToString();
-                skierowanie.tablica_szkodliwosci[i].NDS_NDN = dataGridView1.Rows[i].Cells[3].Value.ToString();
-                skierowanie.tablica_szkodliwosci[i].uwagi = dataGridView1.Rows[i].Cells[4].Value.ToString();
-            }
-        }
-
         //C# function for using Apache FOP to generate PDF from XML
         //Author: Jaroslaw Magiera, Gdansk Universtiy of Technology
         private void exportToPdfButton_Click(object sender, EventArgs e)
@@ -281,12 +266,37 @@ namespace xml_reader
         }
         private void dataGridView1_RowValidated(object sender, DataGridViewCellEventArgs e)
         {
-           //updateTablcaSzkodliwosci();
+            skierowanie.tablica_szkodliwosci = new SzkodliweCzynnik[dataGridView1.RowCount - 1];
+            for (int i = 0; i < dataGridView1.RowCount - 1; i++)
+            {
+                skierowanie.tablica_szkodliwosci[i] = new SzkodliweCzynnik();
+                if (dataGridView1.Rows[i].Cells[0].Value == null)
+                    skierowanie.tablica_szkodliwosci[i].rodzaj_czynnika = "";
+                else
+                    skierowanie.tablica_szkodliwosci[i].rodzaj_czynnika = dataGridView1.Rows[i].Cells[0].Value.ToString();
+
+                if (dataGridView1.Rows[i].Cells[1].Value == null)
+                    skierowanie.tablica_szkodliwosci[i].wyniki_pomiarow = "";
+                else
+                    skierowanie.tablica_szkodliwosci[i].wyniki_pomiarow = dataGridView1.Rows[i].Cells[1].Value.ToString();
+                if (dataGridView1.Rows[i].Cells[2].Value == null)
+                    skierowanie.tablica_szkodliwosci[i].NDS_NDN = "";
+                else
+                    skierowanie.tablica_szkodliwosci[i].NDS_NDN = dataGridView1.Rows[i].Cells[2].Value.ToString();
+
+                if (dataGridView1.Rows[i].Cells[3].Value == null)
+                    skierowanie.tablica_szkodliwosci[i].uwagi = "";
+                else
+                    skierowanie.tablica_szkodliwosci[i].uwagi = dataGridView1.Rows[i].Cells[3].Value.ToString();
+            }
         }
 
         private void dataGridView1_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
         {
-           //updateTablcaSzkodliwosci(); tu musi byc inna obsluga tablicy
+            skierowanie.tablica_szkodliwosci[dataGridView1.RowCount - 1].rodzaj_czynnika = "";
+            skierowanie.tablica_szkodliwosci[dataGridView1.RowCount - 1].wyniki_pomiarow = "";
+            skierowanie.tablica_szkodliwosci[dataGridView1.RowCount - 1].NDS_NDN = "";
+            skierowanie.tablica_szkodliwosci[dataGridView1.RowCount - 1].uwagi = "";
         }
 
         private void label16_Click(object sender, EventArgs e)
@@ -364,23 +374,20 @@ namespace xml_reader
 
         private void isValid(object sender, EventArgs e)
         {
+            MemoryStream ms = new MemoryStream(); //creating a stream for storing XML file with modified data
+            XmlWriter writer = XmlWriter.Create(ms); //creating writer for writing XML file to stream
+            xmlserializer.Serialize(writer, skierowanie);
 
-                MemoryStream ms = new MemoryStream(); //creating a stream for storing XML file with modified data
-                XmlWriter writer = XmlWriter.Create(ms); //creating writer for writing XML file to stream
-                xmlserializer.Serialize(writer, skierowanie);
+            XmlReaderSettings xrset = new XmlReaderSettings(); //definition of XML reader settings
+            xrset.ValidationType = ValidationType.Schema; //validation based on XML Schema
+            ms.Position = 0; //setting the pointer on beginning of memory stream
+            XmlReader reader = XmlReader.Create(ms, xrset); //creating a reader for reading XML from memory stream
 
-                XmlReaderSettings xrset = new XmlReaderSettings(); //definition of XML reader settings
-                xrset.ValidationType = ValidationType.Schema; //validation based on XML Schema
-                ms.Position = 0; //setting the pointer on beginning of memory stream
-                XmlReader reader = XmlReader.Create(ms, xrset); //creating a reader for reading XML from memory stream
-
-                XmlDocument xdoc = new XmlDocument(); //creating an XML document
-                xdoc.Load(reader); //loading document from memory stream
-                xdoc.Schemas.Add(null, @"skierowanie.xsd"); //connecting the XML document with schema from "zamowienie.xsd"
-                //ValidationEventHandler eventHandler = new ValidationEventHandler(ValidationEventCallback); //setting the event handler for handling incorrect validation events
-                XMLValid = true; //setting the default value of XML validity flag for true
-                xdoc.Validate(ValidationEventHandler); //performing validation
-
+            XmlDocument xdoc = new XmlDocument(); //creating an XML document
+            xdoc.Load(reader); //loading document from memory stream
+            xdoc.Schemas.Add(null, @"skierowanie.xsd"); //connecting the XML document with schema from "zamowienie.xsd"
+            //ValidationEventHandler eventHandler = new ValidationEventHandler(ValidationEventCallback); //setting the event handler for handling incorrect validation events
+            xdoc.Validate(ValidationEventHandler); //performing validation
         }
         static void ValidationEventHandler(object sender, ValidationEventArgs e)
         {
@@ -389,7 +396,6 @@ namespace xml_reader
             {
                 if (type == XmlSeverityType.Error)
                 {
-                    XMLValid = false;
                     string a = e.Message.Split('.')[0];
                     string[] b = a.Split(' ');
 
@@ -473,13 +479,11 @@ namespace xml_reader
                     //MessageBox.Show(e.Message, "Validation Error", MessageBoxButtons.OK);
                     msg = "Walidacja nie przebiegła pomyślnie: Błąd\n" + e.Message;
                     MessageBox.Show(msg, "Walidacja: Błąd", MessageBoxButtons.OK);
-                    XMLValid = false;
                     break;
                 case XmlSeverityType.Warning:
                     //MessageBox.Show(e.Message, "Validation Warning", MessageBoxButtons.OK);
                     msg = "Walidacja nie przebiegła pomyślnie: Ostrzeżenie\n" + e.Message;
                     MessageBox.Show(msg, "Walidacja: Ostrzeżenie", MessageBoxButtons.OK);
-                    XMLValid = false;
                     break;
             }
 
@@ -528,13 +532,33 @@ namespace xml_reader
 
         private void dataGridView2_RowValidated(object sender, DataGridViewCellEventArgs e)
         {
-            //updateTablicaBadan();
-            isValid(sender, e);
+            skierowanie.tablica_badan = new BadaniaBadanie_konsultacja[dataGridView2.RowCount - 1];
+
+                for (int i = 0; i < dataGridView2.RowCount - 1; i++)
+                {
+                    skierowanie.tablica_badan[i] = new BadaniaBadanie_konsultacja();
+                if (dataGridView2.Rows[i].Cells[0].Value == null)
+                    skierowanie.tablica_badan[i].badanie = "";
+                else
+                    skierowanie.tablica_badan[i].badanie = dataGridView2.Rows[i].Cells[0].Value.ToString();
+
+                if (dataGridView2.Rows[i].Cells[1].Value == null)
+                    skierowanie.tablica_badan[i].czestotliwosc = "";
+                else
+                    skierowanie.tablica_badan[i].czestotliwosc = dataGridView2.Rows[i].Cells[1].Value.ToString();
+
+                if (dataGridView2.Rows[i].Cells[2].Value == null)
+                    skierowanie.tablica_badan[i].uwagi = "";
+                else
+                    skierowanie.tablica_badan[i].uwagi = dataGridView2.Rows[i].Cells[2].Value.ToString();
+                }
         }
 
         private void dataGridView2_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
         {
-            //updateTablicaBadan();
+            skierowanie.tablica_badan[dataGridView2.RowCount - 1].badanie = "";
+            skierowanie.tablica_badan[dataGridView2.RowCount - 1].czestotliwosc = "";
+            skierowanie.tablica_badan[dataGridView2.RowCount - 1].uwagi = "";
         }
 
         private void dataGridView2_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -584,20 +608,20 @@ namespace xml_reader
 
         private void textBox2_Validating(object sender, CancelEventArgs e)
         {
-            isValid(sender, e);
+            //isValid(sender, e);
 
         }
 
         private void textBox3_Validating(object sender, CancelEventArgs e)
         {
             //nazwisko
-            isValid(sender, e);
+            //isValid(sender, e);
         }
 
         private void textBox7_Validating(object sender, CancelEventArgs e)
         {
             //pesel
-            isValid(sender, e);
+            //isValid(sender, e);
         }
 
         private void textBox5_Validating(object sender, CancelEventArgs e)
@@ -610,45 +634,45 @@ namespace xml_reader
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
             //nazwa zakladu rpracy
-            isValid(sender, e);
+            //isValid(sender, e);
         }
 
         private void textBox6_Validating(object sender, CancelEventArgs e)
         {
             //regon
-            isValid(sender, e);
+            //isValid(sender, e);
         }
 
         private void textBox9_Validating(object sender, CancelEventArgs e)
         {
-            isValid(sender, e);
+            //isValid(sender, e);
         }
 
         private void textBox8_Validating(object sender, CancelEventArgs e)
         {
             //stanowisko
-            isValid(sender, e);
+            //isValid(sender, e);
         }
 
         private void textBox4_Validating(object sender, CancelEventArgs e)
         {
-            isValid(sender, e);
+            //isValid(sender, e);
         }
 
         private void textBox14_Validating(object sender, CancelEventArgs e)
         {
-            isValid(sender, e);
+            //isValid(sender, e);
         }
 
         private void textBox13_TextChanged(object sender, EventArgs e)
         {
             
-            skierowanie.lekarz = textBox13.Text;
+            //skierowanie.lekarz = textBox13.Text;
         }
 
         private void textBox13_Validating(object sender, CancelEventArgs e)
         {
-            isValid(sender, e);
+            //isValid(sender, e);
         }
 
         private void textBox7_KeyPress(object sender, KeyPressEventArgs e)
@@ -664,13 +688,13 @@ namespace xml_reader
         private void textBox15_Validating(object sender, CancelEventArgs e)
         {
             //miasto
-            isValid(sender, e);
+            //isValid(sender, e);
         }
 
         private void comboBox1_Validating(object sender, CancelEventArgs e)
         {
             //nie waliduje sie
-            isValid(sender, e);
+            //isValid(sender, e);
         }
 
         private void maskedTextBox1_MaskInputRejected(object sender, MaskInputRejectedEventArgs e)
@@ -680,7 +704,7 @@ namespace xml_reader
 
         private void maskedTextBox1_Validating(object sender, CancelEventArgs e)
         {
-            isValid(sender, e);
+            //isValid(sender, e);
         }
 
         private void textBox2_KeyPress(object sender, KeyPressEventArgs e)
@@ -700,12 +724,7 @@ namespace xml_reader
             try
             {
                 XmlDocument xmlDoc = getValidXmlDocumentFromModel();
-                /*
-                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-                {
-                    xmlDoc.Save(saveFileDialog1.FileName);
-                }
-                */
+
                 SaveFileDialog savefile = new SaveFileDialog();
                 if (savefile.ShowDialog() == DialogResult.OK)
                 {
@@ -734,7 +753,7 @@ namespace xml_reader
                     Console.WriteLine(pdfDir);
                     String fopXconfFile = "fop.xconf"; //FOP configuration file (necessary to import Windows system fonts)
                     String xmlFile = "skierowanieTemp.xml"; //Input XML file name
-                    String xslFile = "moj.xsl"; //Input XSL file name
+                    String xslFile = "moj1.xsl"; //Input XSL file name
                     String pdfFile = Path.GetFileName(savefile.FileName); //Output PDF file name
                     Console.WriteLine(pdfFile);
                     fs = new FileStream("pdfexport.bat", FileMode.Create);
@@ -779,236 +798,10 @@ namespace xml_reader
                         MessageBoxIcon.Error
                         );
             }
-            /*
-            string msg = "";
-
-            string filepath = "";
-            filepath = "C:\\Users\\Alicja\\Desktop\\DokAla\\skierowanie.xsd";
-            MemoryStream ms = new MemoryStream(); //creating a stream for storing XML file with modified data
-
-            XmlWriterSettings settings = new XmlWriterSettings();
-            settings.Indent = true;
-
-            XmlWriter writer = XmlWriter.Create(ms, settings); //creating writer for writing XML file to stream
-            xmlserializer.Serialize(writer, skierowanie);
-            XmlReaderSettings xrset = new XmlReaderSettings(); //definition of XML reader settings
-            xrset.ValidationType = ValidationType.Schema; //validation based on XML Schema
-            ms.Position = 0; //setting the pointer on beginning of memory stream
-            XmlReader reader = XmlReader.Create(ms, xrset); //creating a reader for reading XML from memory stream
-            XmlDocument xdoc = new XmlDocument(); //creating an XML document
-            xdoc.Load(reader); //loading document from memory stream
-            xdoc.Schemas.Add(null, filepath); //connecting the XML document with schema from "zamowienie.xsd"
-            ValidationEventHandler eventHandler = new ValidationEventHandler(ValidationEventCallback); //setting the event handler for handling incorrect validation events
-            msg = "";
-            XMLValid = true; //setting the default value of XML validity flag for true
-            xdoc.Validate(eventHandler); //performing validation
-            if (msg != "")
-                MessageBox.Show(msg, "Walidacja niepomyślna", MessageBoxButtons.OK);
-            //Writing the memory stream to a file "zamowienie_mod.xml" if the document is valid
-
-            if (XMLValid)
-            {
-                SaveFileDialog savefile = new SaveFileDialog();
-                if (savefile.ShowDialog() == DialogResult.OK)
-                {
-                    filepath = "C:\\Users\\Alicja\\Documents\\Visual Studio 2015\\Projects\\xml_reader\\xml_reader\\skierowanieTemporary.xml";
-                    if (!File.Exists(filepath))
-                        File.Create(filepath);
-                    filepath = savefile.FileName;
-
-                    Console.WriteLine(savefile.FileName);
-
-                    FileStream fs = new FileStream(filepath, FileMode.Create);
-                    ms.Position = 0;
-                    ms.CopyTo(fs);
-                    fs.Close();
-                    //toolStripStatusLabel2.Text = "XML valid - marshalling to \"zamowienie_mod.xml\" file";
-                    toolStripStatusLabel1.Text = "Walidacja XML pomyślna - dane zapisano do pliku " + filepath;
-                    String fopDir = "C:\\Users\\Alicja\\Desktop\\DokAla\\fop-1.1\\fop-1.1\\"; //Apache FOP working directory
-                    String xmlDir = "C:\\Users\\Alicja\\Desktop\\DokAla\\"; //Directory where XML resides (Our apllication working directory)
-                    String xslDir = "C:\\Users\\Alicja\\Desktop\\DokAla\\"; //Directory where XSL resides (Our apllication working directory)
-                    String pdfDir = Path.GetDirectoryName(savefile.FileName) + "\\"; //Directory where PDFs will be saved (Our apllication working directory)
-                    Console.WriteLine(pdfDir);
-                    String fopXconfFile = "fop.xconf"; //FOP configuration file (necessary to import Windows system fonts)
-                    String xmlFile = "skierowanieTemp.xml"; //Input XML file name
-                    String xslFile = "moj.xsl"; //Input XSL file name
-                    String pdfFile = Path.GetFileName(savefile.FileName); //Output PDF file name
-                    Console.WriteLine(pdfFile);
-                    fs = new FileStream("pdfexport.bat", FileMode.Create);
-                    StreamWriter sw = new StreamWriter(fs);
-                    //Writing Windows commands in separate lines of our batch (*.bat) file
-                    sw.WriteLine("call {0}fop -c {1}{2} -xml {3}{4} -xsl {5}{6} -pdf {7}{8}", fopDir, fopDir, fopXconfFile, xmlDir, xmlFile, xslDir, xslFile, pdfDir, pdfFile, fopDir);
-                    sw.WriteLine("pause"); //the above "call" is needed to execute the "pause" command after FOP exits
-                    sw.Close();
-                    fs.Close();
-
-                    // Start the pdf export process
-                    //using System.Diagnostics
-                    Process p = new Process();
-                    p.StartInfo.UseShellExecute = true;
-                    p.StartInfo.RedirectStandardOutput = false;
-                    p.StartInfo.FileName = "pdfexport.bat"; //Batch file created in application working directory
-                    p.Start();
-                    p.WaitForExit(); //Wait for PDF generation before opening it
-
-
-                    // Start process opening generated PDF
-                    p = new Process();
-                    p.StartInfo.UseShellExecute = true;
-                    p.StartInfo.RedirectStandardOutput = false;
-                    try
-                    {
-                        p.StartInfo.FileName = pdfDir + pdfFile;
-                        p.Start();
-                        //p.WaitForExit(); //If this line was left uncommented, our application would be inactive until PDF browser was closed
-
-                    }
-                    catch (Exception exc) { } //Here you can catch exception if PDF cannot be opened for some reason
-                }
-            }
-            else
-            {
-                //toolStripStatusLabel2.Text = "XML invalid";
-                toolStripStatusLabel1.Text = "Nieprawidłowe dane dokumentu";
-            }
-            ms.Close();
-            statusStrip1.Text = "Walidacja XML pomyślna - dane zapisano do pliku \"zamowienie_mod.xml5\"";
-            */
+            
         }
-        /*
-            catch (XmlSchemaValidationException)
-            {
-                MessageBox.Show(
-                        "Niepoprawnie wypełnione pola w dokumencie." +
-                        "\nPlik nie zostanie zapisany. Proszę o korektę.",
-                        "Błąd",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error
-                        );
-            }
-            SaveFileDialog savefile = new SaveFileDialog();
-
-                */
-
-                /* use itextSharp
-                //exportToPdfButton_Click(sender, e);
-                Document doc = new Document(iTextSharp.text.PageSize.A4, 10, 10, 10, 10);
-                PdfWriter wri = PdfWriter.GetInstance(doc, new FileStream("test.pdf", FileMode.Create));
-                doc.Open();//open doc to write
-                Paragraph new_line = new Paragraph("\n");
-                //set fonts
-                BaseFont bf = BaseFont.CreateFont(BaseFont.TIMES_ROMAN, BaseFont.CP1250, true);
-                var fontBig = new iTextSharp.text.Font(bf, 15);
-                var fontSmall = new iTextSharp.text.Font(bf, 11);
-                var fontVerySmall = new iTextSharp.text.Font(bf, 6);
-
-                Paragraph p = new Paragraph("Skierowanie na badania profilaktyczne",fontBig);
-                p.Alignment = Element.ALIGN_CENTER;
-                doc.Add(p);
-                doc.Add(new_line);
-
-                PdfPTable A = new PdfPTable(1);
-                A.AddCell("A.");
-                //A.TotalWidth = 10f;
-                A.HorizontalAlignment = Element.ALIGN_LEFT;
-                A.WidthPercentage = 5;
-                doc.Add(A);
-                doc.Add(new_line);
-
-                PdfPTable tablica_szkodliwosci = new PdfPTable(dataGridView1.Columns.Count);
-                //add headers
-                for (int i = 0; i < dataGridView1.Columns.Count; ++i)
-                {
-                    PdfPCell cell = new PdfPCell(new Phrase(dataGridView1.Columns[i].HeaderText, fontSmall));
-                    cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                    tablica_szkodliwosci.AddCell(cell);
-                }
-
-                //flag the first row as a header
-                tablica_szkodliwosci.HeaderRows = 1;
-
-                //add the actual rows to the table
-                for (int i = 0; i < dataGridView1.Rows.Count; ++i)
-                {
-                    for (int j = 0; j < dataGridView1.Columns.Count; ++j)
-                    {
-                        if (dataGridView1[j, i].Value != null)
-                        {
-                            PdfPCell cell = new PdfPCell(new Phrase(dataGridView1[j, i].Value.ToString(), fontSmall));
-                            cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                            tablica_szkodliwosci.AddCell(cell);
-                        }
-                    }
-                }
-                doc.Add(tablica_szkodliwosci);
-
-                Paragraph uwagiA;
-                if (skierowanie.dodatkowe_uwagi_B == null)
-                    uwagiA = new Paragraph("Dodatkowe uwagi: ", fontSmall);
-                else
-                    uwagiA = new Paragraph("Dodatkowe uwagi: " + skierowanie.dodatkowe_uwagi_A.ToString(), fontSmall);
-                uwagiA.Alignment = Element.ALIGN_LEFT;
-                doc.Add(uwagiA);
-                doc.Add(new_line);
-
-                PdfPTable B = new PdfPTable(1);
-                B.AddCell("B.");
-                //A.TotalWidth = 10f;
-                B.HorizontalAlignment = Element.ALIGN_LEFT;
-                B.WidthPercentage = 5;
-                doc.Add(B);
-                doc.Add(new_line);
-
-                PdfPTable tablica_badan = new PdfPTable(dataGridView2.Columns.Count);
-                //add headers
-                for (int i = 0; i < dataGridView2.Columns.Count; ++i)
-                {
-                    PdfPCell cell = new PdfPCell(new Phrase(dataGridView2.Columns[i].HeaderText, fontSmall));
-                    cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                    tablica_badan.AddCell(cell);
-                }
-
-                //flag the first row as a header
-                tablica_badan.HeaderRows = 1;
-
-                //add the actual rows to the table
-                for (int i = 0; i < dataGridView2.Rows.Count; ++i)
-                {
-                    for (int j = 0; j < dataGridView2.Columns.Count; ++j)
-                    {
-                        if (dataGridView2[j, i].Value != null)
-                        {
-                            PdfPCell cell = new PdfPCell(new Phrase(dataGridView2[j, i].Value.ToString(), fontSmall));
-                            cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                            tablica_badan.AddCell(cell);
-                        }
-                    }
-                }
-                doc.Add(tablica_badan);
-
-                Paragraph uwagiB;
-                if (skierowanie.dodatkowe_uwagi_B == null)
-                    uwagiB = new Paragraph("Dodatkowe uwagi: ", fontSmall);
-                else
-                    uwagiB = new Paragraph("Dodatkowe uwagi: " + skierowanie.dodatkowe_uwagi_B.ToString(), fontSmall);
-
-                uwagiB.Alignment = Element.ALIGN_LEFT;
-                doc.Add(uwagiB);
-                doc.Add(new_line);
-
-                Paragraph data = new Paragraph("data wystawienia skierowania", fontVerySmall);
-                data.Alignment = Element.ALIGN_LEFT;
-                doc.Add(data);
-
-                doc.Close();
-                */
-            //}
-
         private void button_NowyPlik_Click(object sender, EventArgs e)
         {
-            //this.Hide();//how to close it?
-            //Form1 newFile = new Form1();
-            //newFile.Show();
             this.Close();
             th = new Thread(openNewForm);
             th.SetApartmentState(ApartmentState.STA);
